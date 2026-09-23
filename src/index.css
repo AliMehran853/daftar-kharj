@@ -1,0 +1,350 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────
+   فونت وزیرمتن — ۶ وزن
+   ───────────────────────────────────────────── */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────
+   حالت روشن
+   ───────────────────────────────────────────── */
+:root {
+  --bg: #FAF6F9;
+  --bg-elevated: #FFFFFF;
+  --card: #FFFFFF;
+  --border: rgba(216, 27, 96, 0.08);
+  --border-strong: rgba(216, 27, 96, 0.14);
+
+  --brand: #D81B60;
+  --brand-dark: #A83279;
+  --brand-light: #F06292;
+  --brand-soft: #FCE4EC;
+
+  --info: #6B4C93;
+  --info-dark: #5A3F7D;
+  --info-soft: #EFE7F5;
+
+  --accent: #8E24AA;
+  --accent-dark: #7B1FA2;
+  --accent-soft: #F3E5F5;
+
+  --danger: #B91C4A;
+  --danger-soft: #FCE4EC;
+
+  --success: #16A34A;
+  --success-soft: #DCFCE7;
+
+  --fg: #1A0F1F;
+  --fg-secondary: #6B3B54;
+  --fg-muted: #9C7A88;
+
+  /* سایه‌های سه‌بعدی — لایه‌ای */
+  --shadow-soft:
+    0 1px 2px rgba(26, 15, 31, 0.04),
+    0 4px 12px rgba(26, 15, 31, 0.05);
+
+  --shadow-card:
+    0 1px 2px rgba(26, 15, 31, 0.05),
+    0 6px 16px rgba(26, 15, 31, 0.07),
+    0 16px 32px rgba(26, 15, 31, 0.06);
+
+  --shadow-float:
+    0 2px 4px rgba(26, 15, 31, 0.06),
+    0 12px 28px rgba(26, 15, 31, 0.10),
+    0 32px 64px rgba(26, 15, 31, 0.10);
+
+  --shadow-brand:
+    0 2px 6px rgba(216, 27, 96, 0.18),
+    0 8px 20px rgba(216, 27, 96, 0.22),
+    0 20px 40px rgba(216, 27, 96, 0.14);
+
+  --shadow-info:
+    0 2px 6px rgba(107, 76, 147, 0.18),
+    0 8px 20px rgba(107, 76, 147, 0.22),
+    0 20px 40px rgba(107, 76, 147, 0.14);
+
+  /* highlight لبه‌ی بالا */
+  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --highlight-top-subtle: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+  --gradient-brand: linear-gradient(135deg, #D81B60 0%, #8E24AA 100%);
+  --gradient-savings: linear-gradient(135deg, #6B4C93 0%, #8E24AA 100%);
+}
+
+/* ─────────────────────────────────────────────
+   حالت تاریک
+   ───────────────────────────────────────────── */
+.dark {
+  --bg: #1A0F1F;
+  --bg-elevated: #2A1629;
+  --card: #2A1629;
+  --border: rgba(233, 30, 99, 0.15);
+  --border-strong: rgba(233, 30, 99, 0.25);
+
+  --brand: #E91E63;
+  --brand-dark: #C2185B;
+  --brand-light: #F06292;
+  --brand-soft: rgba(233, 30, 99, 0.15);
+
+  --info: #8E7AB5;
+  --info-dark: #7A66A5;
+  --info-soft: rgba(142, 122, 181, 0.15);
+
+  --accent: #B24BCC;
+  --accent-dark: #9C27B0;
+  --accent-soft: rgba(178, 75, 204, 0.15);
+
+  --danger: #F06292;
+  --danger-soft: rgba(240, 98, 146, 0.15);
+
+  --success: #34D399;
+  --success-soft: rgba(52, 211, 153, 0.15);
+
+  --fg: #FAF5F7;
+  --fg-secondary: #C4A8B4;
+  --fg-muted: #8A6E7A;
+
+  --shadow-soft:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 4px 12px rgba(0, 0, 0, 0.25);
+
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 6px 16px rgba(0, 0, 0, 0.35),
+    0 16px 32px rgba(0, 0, 0, 0.30);
+
+  --shadow-float:
+    0 2px 4px rgba(0, 0, 0, 0.40),
+    0 12px 28px rgba(0, 0, 0, 0.45),
+    0 32px 64px rgba(0, 0, 0, 0.50);
+
+  --shadow-brand:
+    0 2px 6px rgba(233, 30, 99, 0.25),
+    0 8px 20px rgba(233, 30, 99, 0.30),
+    0 20px 40px rgba(233, 30, 99, 0.20);
+
+  --shadow-info:
+    0 2px 6px rgba(142, 122, 181, 0.25),
+    0 8px 20px rgba(142, 122, 181, 0.30),
+    0 20px 40px rgba(142, 122, 181, 0.20);
+
+  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --highlight-top-subtle: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  --gradient-brand: linear-gradient(135deg, #E91E63 0%, #B24BCC 100%);
+  --gradient-savings: linear-gradient(135deg, #8E7AB5 0%, #B24BCC 100%);
+}
+
+/* ─────────────────────────────────────────────
+   Tailwind v4
+   ───────────────────────────────────────────── */
+@theme inline {
+  --font-sans: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-brand-soft: var(--brand-soft);
+
+  --color-info: var(--info);
+  --color-info-dark: var(--info-dark);
+  --color-info-soft: var(--info-soft);
+
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+
+  --color-fg: var(--fg);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-muted: var(--fg-muted);
+
+  --radius-card: 24px;
+  --radius-card-lg: 28px;
+  --radius-btn: 14px;
+
+  --shadow-soft: var(--shadow-soft);
+  --shadow-card: var(--shadow-card);
+  --shadow-float: var(--shadow-float);
+  --shadow-brand: var(--shadow-brand);
+  --shadow-info: var(--shadow-info);
+}
+
+/* ─────────────────────────────────────────────
+   پایه
+   ───────────────────────────────────────────── */
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button, input, textarea, select {
+    font: inherit;
+    color: inherit;
+  }
+
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Utility — Glassmorphism
+   ───────────────────────────────────────────── */
+@utility glass {
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+@utility glass-strong {
+  background: color-mix(in srgb, var(--card) 82%, transparent);
+  backdrop-filter: saturate(200%) blur(28px);
+  -webkit-backdrop-filter: saturate(200%) blur(28px);
+  border: 1px solid color-mix(in srgb, var(--fg) 6%, transparent);
+  box-shadow:
+    var(--highlight-top-subtle),
+    var(--shadow-float);
+}
+
+/* ─────────────────────────────────────────────
+   Utility — 3D Depth
+   ───────────────────────────────────────────── */
+@utility depth-card {
+  box-shadow: var(--highlight-top-subtle), var(--shadow-card);
+}
+
+@utility depth-float {
+  box-shadow: var(--highlight-top-subtle), var(--shadow-float);
+}
+
+@utility depth-brand {
+  box-shadow: var(--highlight-top-subtle), var(--shadow-brand);
+}
+
+@utility depth-info {
+  box-shadow: var(--highlight-top-subtle), var(--shadow-info);
+}
+
+/* press — فشردن نرم سه‌بعدی */
+@utility press {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  &:active {
+    transform: translateY(1px) scale(0.99);
+  }
+}
+
+@utility press-sm {
+  transition: transform 0.12s ease-out;
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@utility press-lg {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  &:active {
+    transform: translateY(2px) scale(0.98);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Utility — گرادیان‌ها
+   ───────────────────────────────────────────── */
+@utility bg-gradient-brand {
+  background: var(--gradient-brand);
+}
+@utility bg-gradient-savings {
+  background: var(--gradient-savings);
+}
+
+/* ─────────────────────────────────────────────
+   Utility — عمومی
+   ───────────────────────────────────────────── */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility pt-safe {
+  padding-top: max(env(safe-area-inset-top), 0px);
+}
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}

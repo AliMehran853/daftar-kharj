@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fa-AF" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>دفتر خرج — آفلاین</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #F5FBF8;
+        color: #0F2620;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        text-align: center;
+      }
+      .box {
+        max-width: 360px;
+      }
+      .icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #00B894 0%, #009B7A 100%);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+      }
+      h1 {
+        font-size: 22px;
+        margin-bottom: 8px;
+      }
+      p {
+        color: #4A6660;
+        line-height: 1.8;
+        font-size: 14px;
+      }
+      button {
+        margin-top: 24px;
+        padding: 12px 28px;
+        background: #00B894;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <div class="icon">💰</div>
+      <h1>اتصال به اینترنت نیست</h1>
+      <p>
+        دفتر خرج کاملاً آفلاین کار می‌کند. این صفحه فقط زمانی نشان داده می‌شود
+        که هنوز اپ برای اولین بار نصب نشده باشد.
+      </p>
+      <button onclick="location.reload()">تلاش مجدد</button>
+    </div>
+  </body>
+</html>
