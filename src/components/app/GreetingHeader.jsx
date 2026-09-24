@@ -17,24 +17,24 @@ export default function GreetingHeader() {
     <header className="flex items-center gap-3 px-1">
       <Avatar name={initial} size="lg" />
       <div className="flex-1 min-w-0">
-        <div className="font-semibold text-fg truncate">
+        <div className="font-semibold text-text truncate">
           سلام {name} <span className="inline-block">👋</span>
         </div>
-        <div className="text-xs text-fg-muted truncate mt-0.5">
+        <div className="text-xs text-text-muted truncate mt-0.5">
           {formatFullDate(new Date())}
         </div>
       </div>
       <div className="flex items-center gap-1.5">
         <button
           onClick={() => navigate(ROUTES.EXPENSES)}
-          className="size-10 rounded-full glass border border-border flex items-center justify-center text-fg transition active:scale-95"
+          className="size-10 rounded-full neu-raised-sm flex items-center justify-center text-text transition press-sm"
           aria-label="جستجو"
         >
           <Search size={18} />
         </button>
         <button
           onClick={toggleTheme}
-          className="size-10 rounded-full glass border border-border flex items-center justify-center text-fg transition active:scale-95"
+          className="size-10 rounded-full neu-raised-sm flex items-center justify-center text-text transition press-sm"
           aria-label="تغییر تم"
         >
           {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}

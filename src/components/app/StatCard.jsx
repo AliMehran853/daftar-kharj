@@ -4,7 +4,7 @@ import { toPersianDigits } from '@/lib/utils'
 
 export default function StatCard({
   icon,
-  color = '#D81B60',
+  color = 'var(--primary)',
   label,
   value,
   unit,
@@ -17,21 +17,19 @@ export default function StatCard({
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        'bg-card border border-border rounded-card p-4',
-        'depth-card',
-        'text-right transition-all duration-200',
-        onClick &&
-          'press hover:-translate-y-0.5 hover:border-border-strong cursor-pointer',
+        'rounded-card p-4 text-right transition-all duration-200',
+        'neu-raised-sm',
+        onClick && 'press-sm hover:shadow-raised',
         className
       )}
     >
       <IconCircle icon={icon} color={color} size="md" />
-      <div className="mt-3 text-[13px] text-fg-muted">{label}</div>
+      <div className="mt-3 text-[13px] text-text-muted">{label}</div>
       <div className="mt-0.5 flex items-baseline gap-1">
-        <span className="text-2xl font-bold text-fg leading-none tabular-nums">
+        <span className="text-2xl font-bold text-text leading-none tabular-nums">
           {typeof value === 'number' ? toPersianDigits(value) : value}
         </span>
-        {unit && <span className="text-xs text-fg-muted">{unit}</span>}
+        {unit && <span className="text-xs text-text-muted">{unit}</span>}
       </div>
     </button>
   )

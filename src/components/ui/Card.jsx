@@ -4,24 +4,29 @@ export default function Card({
   as: Tag = 'div',
   padded = true,
   clickable = false,
-  variant = 'default', // 'default' | 'glass' | 'gradient'
+  variant = 'raised', // 'raised' | 'raised-sm' | 'raised-lg' | 'inset' | 'flat'
   className,
   children,
   ...rest
 }) {
-  const baseClasses = cn(
-    'rounded-card',
-    padded && 'p-4',
-    variant === 'default' &&
-      'bg-card border border-border depth-card',
-    variant === 'glass' && 'glass-strong rounded-card',
-    clickable &&
-      'cursor-pointer press transition-all duration-200 hover:-translate-y-0.5 hover:border-border-strong',
-    className
-  )
+  const variantClasses = {
+    'raised': 'neu-raised rounded-card',
+    'raised-sm': 'neu-raised-sm rounded-card-sm',
+    'raised-lg': 'neu-raised-lg rounded-card-lg',
+    'inset': 'neu-inset rounded-card',
+    'flat': 'neu-flat rounded-card',
+  }
 
   return (
-    <Tag {...rest} className={baseClasses}>
+    <Tag
+      {...rest}
+      className={cn(
+        variantClasses[variant],
+        padded && 'p-4',
+        clickable && 'cursor-pointer press hover:shadow-raised-lg transition-all duration-200',
+        className
+      )}
+    >
       {children}
     </Tag>
   )

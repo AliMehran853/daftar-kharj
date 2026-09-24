@@ -9,22 +9,22 @@ import { ROUTES } from '@/data/constants'
 function getHealthColors(usedPercent) {
   if (usedPercent < 50) {
     return {
-      bar: '#4ADE80',
-      glow: 'rgba(74, 222, 128, 0.5)',
-      text: '#BBF7D0',
+      bar: 'var(--income)',
+      glow: 'rgba(22, 165, 106, 0.4)',
+      text: '#B8F5D5',
     }
   }
   if (usedPercent < 80) {
     return {
-      bar: '#FCD34D',
-      glow: 'rgba(252, 211, 77, 0.5)',
-      text: '#FEF3C7',
+      bar: 'var(--warning)',
+      glow: 'rgba(245, 166, 35, 0.4)',
+      text: '#FFE4B5',
     }
   }
   return {
-    bar: '#FF8A80',
-    glow: 'rgba(255, 138, 128, 0.6)',
-    text: '#FECACA',
+    bar: 'var(--expense)',
+    glow: 'rgba(240, 68, 120, 0.4)',
+    text: '#FFC5D5',
   }
 }
 
@@ -51,35 +51,27 @@ export default function BalanceHero({ balance = 0, stats }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="rounded-[28px] p-5 text-white relative overflow-hidden"
+      className="rounded-card-lg p-5 text-white relative overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, #D81B60 0%, #8E24AA 100%)',
-        boxShadow:
-          'inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 1px 3px rgba(216, 27, 96, 0.08), 0 4px 12px rgba(216, 27, 96, 0.06)',
+        background: 'var(--gradient-brand)',
+        boxShadow: 'var(--hero-shadow)',
       }}
     >
-      {/* نور بالای کارت — بازتاب */}
       <div
         className="absolute -top-24 left-1/2 -translate-x-1/2 w-[140%] h-48 rounded-full pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse at center top, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 45%, transparent 70%)',
+            'radial-gradient(ellipse at center top, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.03) 45%, transparent 70%)',
           zIndex: 0,
         }}
       />
 
-      {/* لکه‌ی تزئینی */}
-      <div
-        className="absolute -bottom-24 -right-12 size-56 rounded-full bg-white/5 blur-3xl pointer-events-none"
-        style={{ zIndex: 0 }}
-      />
-
       <div className="relative" style={{ zIndex: 1 }}>
         <div className="flex items-start justify-between">
-          <div className="text-sm text-white/85">موجودی خزانه</div>
+          <div className="text-sm text-white/80">موجودی خزانه</div>
           <button
             onClick={togglePrivacy}
-            className="size-9 rounded-full bg-white/15 backdrop-blur border border-white/20 flex items-center justify-center transition press-sm hover:bg-white/20"
+            className="size-9 rounded-full bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center transition press-sm hover:bg-white/20"
             aria-label="حریم خصوصی"
           >
             <Sparkles size={16} />
@@ -97,16 +89,16 @@ export default function BalanceHero({ balance = 0, stats }) {
               color: isNegative ? '#FFB3B3' : '#FFFFFF',
               textShadow: isNegative
                 ? '0 0 20px rgba(255, 80, 80, 0.5)'
-                : '0 1px 2px rgba(0, 0, 0, 0.15)',
+                : '0 1px 2px rgba(0, 0, 0, 0.10)',
             }}
           >
             {money(balance)}
           </motion.span>
-          <span className="text-sm text-white/85">{currency}</span>
+          <span className="text-sm text-white/70">{currency}</span>
         </div>
 
         <div className="mt-6">
-          <div className="h-1.5 rounded-full bg-white/20 overflow-hidden">
+          <div className="h-1.5 rounded-full bg-white/15 overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${remainingPercent}%` }}
@@ -122,7 +114,7 @@ export default function BalanceHero({ balance = 0, stats }) {
             <span className="font-medium" style={{ color: health.text }}>
               {Math.round(remainingPercent)}٪ باقی
             </span>
-            <span className="text-white/70">
+            <span className="text-white/60">
               {Math.round(usedPercent)}٪ مصرف شده
             </span>
           </div>
@@ -148,7 +140,7 @@ export default function BalanceHero({ balance = 0, stats }) {
 
         <button
           onClick={() => navigate(ROUTES.REPORTS)}
-          className="mt-4 w-full h-11 rounded-btn bg-white/15 backdrop-blur border border-white/20 flex items-center justify-center gap-2 text-sm font-medium transition press hover:bg-white/20"
+          className="mt-4 w-full h-11 rounded-btn bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center gap-2 text-sm font-medium transition press hover:bg-white/20"
         >
           <span>خلاصه‌ی همه‌ی دوره‌ها</span>
           <ChevronLeft size={16} />
@@ -161,12 +153,12 @@ export default function BalanceHero({ balance = 0, stats }) {
 function StatColumn({ label, value, color }) {
   return (
     <div className="text-center">
-      <div className="text-[11px] text-white/70 mb-1">{label}</div>
+      <div className="text-[11px] text-white/60 mb-1">{label}</div>
       <div
         className="text-[15px] font-semibold tabular-nums"
         style={{
           color,
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.10)',
         }}
       >
         {value}

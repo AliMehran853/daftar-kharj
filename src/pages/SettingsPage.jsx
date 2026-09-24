@@ -60,7 +60,6 @@ export default function SettingsPage() {
   const lockIsFullyEnabled =
     auth.lockEnabled && (auth.pinEnabled || auth.biometricEnabled)
 
-  /* ── روشن/خاموش سوییچ قفل ── */
   const handleToggleLock = async (enabled) => {
     if (enabled) {
       if (!auth.pinEnabled && !auth.biometricEnabled) {
@@ -84,7 +83,6 @@ export default function SettingsPage() {
     }
   }
 
-  /* ── تنظیم / تغییر PIN ── */
   const handleSetupPin = () => {
     if (auth.pinEnabled) {
       openSheet('pin-setup', {
@@ -114,7 +112,6 @@ export default function SettingsPage() {
     }
   }
 
-  /* ── حذف PIN ── */
   const handleRemovePin = () => {
     openSheet('pin-setup', {
       mode: 'verify',
@@ -126,7 +123,6 @@ export default function SettingsPage() {
     })
   }
 
-  /* ── ثبت / حذف اثر انگشت ── */
   const handleToggleBiometric = async () => {
     setBiometricBusy(true)
     try {
@@ -157,14 +153,12 @@ export default function SettingsPage() {
     }
   }
 
-  /* ── خروج از حساب ── */
   const handleLogout = () => {
     auth.lock()
     setLogoutOpen(false)
     showToast('از حساب خارج شدی', 'info')
   }
 
-  /* ── یادآوری ── */
   const handleToggleReminder = async (v) => {
     await settings.update('reminderEnabled', v)
     showToast(
@@ -173,7 +167,6 @@ export default function SettingsPage() {
     )
   }
 
-  /* ── ریست کامل ── */
   const handleReset = async () => {
     setResetting(true)
     try {
@@ -194,43 +187,40 @@ export default function SettingsPage() {
     <div className="px-4 lg:px-6 py-2 pb-6 space-y-5">
       <PageHeader title="تنظیمات" />
 
-      {/* کارت پروفایل */}
       <button
         onClick={() => setEditProfileOpen(true)}
-        className="w-full bg-card border border-border rounded-card p-4 flex items-center gap-3 text-right transition active:scale-[0.99] hover:bg-brand-soft/20"
+        className="w-full rounded-card p-4 flex items-center gap-3 text-right transition press-sm neu-raised-sm"
       >
         <Avatar name={initial} size="lg" />
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-fg truncate">{displayName}</div>
-          <div className="text-[11px] text-fg-muted mt-0.5">
+          <div className="font-semibold text-text truncate">{displayName}</div>
+          <div className="text-[11px] text-text-muted mt-0.5">
             حساب محلی روی همین دستگاه
           </div>
         </div>
-        <ChevronLeft size={18} className="text-fg-muted shrink-0" />
+        <ChevronLeft size={18} className="text-text-muted shrink-0" />
       </button>
 
-      {/* پروفایل */}
       <Section title="پروفایل">
         <Row
           icon={User}
-          color="#D81B60"
+          color="var(--primary)"
           label="ویرایش پروفایل"
           onClick={() => setEditProfileOpen(true)}
         />
         <Row
           icon={Banknote}
-          color="#6B4C93"
+          color="var(--saving)"
           label="معاش ماهانه"
           value={`${formatMoney(settings.monthlySalary)} ${settings.currencyLabel}`}
           onClick={() => setSalaryOpen(true)}
         />
       </Section>
 
-      {/* امنیت */}
       <Section title="امنیت">
         <Row
           icon={Lock}
-          color="#8E24AA"
+          color="var(--saving)"
           label="قفل برنامه"
           hint="درخواست رمز هنگام ورود"
           right={
@@ -243,7 +233,7 @@ export default function SettingsPage() {
 
         <Row
           icon={KeyRound}
-          color="#D81B60"
+          color="var(--primary)"
           label={auth.pinEnabled ? 'تغییر رمز' : 'تنظیم رمز ۴ رقمی'}
           value={auth.pinEnabled ? 'فعال' : 'غیرفعال'}
           onClick={handleSetupPin}
@@ -254,7 +244,7 @@ export default function SettingsPage() {
                   e.stopPropagation()
                   handleRemovePin()
                 }}
-                className="size-8 rounded-full hover:bg-danger-soft flex items-center justify-center text-danger transition active:scale-95"
+                className="size-8 rounded-full hover:bg-expense/10 flex items-center justify-center text-expense transition press-sm"
                 aria-label="حذف رمز"
               >
                 <Trash2 size={15} />
@@ -265,7 +255,7 @@ export default function SettingsPage() {
 
         <Row
           icon={Fingerprint}
-          color="#6B4C93"
+          color="var(--saving)"
           label="ورود با اثر انگشت"
           value={auth.biometricEnabled ? 'فعال' : 'غیرفعال'}
           hint={biometricBusy ? 'در حال پردازش…' : undefined}
@@ -279,11 +269,10 @@ export default function SettingsPage() {
         />
       </Section>
 
-      {/* یادآوری */}
       <Section title="یادآوری">
         <Row
           icon={Bell}
-          color="#D81B60"
+          color="var(--primary)"
           label="یادآوری ثبت روزانه"
           hint="اگر بیش از ۲۴ ساعت ثبت نکردی، یادآوری می‌شود"
           right={
@@ -296,7 +285,7 @@ export default function SettingsPage() {
         {settings.reminderEnabled && (
           <Row
             icon={Clock}
-            color="#8E24AA"
+            color="var(--saving)"
             label="زمان یادآوری"
             value={timeDisplay}
             onClick={() => setTimeOpen(true)}
@@ -304,18 +293,17 @@ export default function SettingsPage() {
         )}
       </Section>
 
-      {/* داده‌ها */}
       <Section title="داده‌ها">
         <Row
           icon={HardDriveDownload}
-          color="#16A34A"
+          color="var(--income)"
           label="پشتیبان‌گیری و بازیابی"
           hint="خروجی JSON یا بازگردانی از فایل"
           onClick={() => openSheet('backup')}
         />
         <Row
           icon={RotateCcw}
-          color="#B91C4A"
+          color="var(--expense)"
           label="پاک‌سازی و شروع مجدد"
           hint="همه‌ی داده‌ها پاک می‌شوند"
           danger
@@ -323,19 +311,18 @@ export default function SettingsPage() {
         />
         <Row
           icon={Info}
-          color="#9C7A88"
+          color="var(--text-muted)"
           label="درباره‌ی دفتر خرج"
           value={`نسخه ${APP_VERSION}`}
           onClick={() => setAboutOpen(true)}
         />
       </Section>
 
-      {/* خروج */}
       {lockIsFullyEnabled && (
         <Section title="حساب">
           <Row
             icon={LogOut}
-            color="#B91C4A"
+            color="var(--expense)"
             label="خروج از حساب"
             hint="قفل مجدد و نیاز به رمز برای ورود"
             danger
@@ -344,13 +331,12 @@ export default function SettingsPage() {
         </Section>
       )}
 
-      <div className="pt-3 text-center text-[11px] text-fg-muted leading-relaxed">
+      <div className="pt-3 text-center text-[11px] text-text-muted leading-relaxed">
         {APP_NAME} • نسخه {APP_VERSION}
         <br />
         ساخته شده با ❤ در افغانستان
       </div>
 
-      {/* مودال‌ها */}
       <EditProfileModal
         open={editProfileOpen}
         onClose={() => setEditProfileOpen(false)}
@@ -390,16 +376,13 @@ export default function SettingsPage() {
   )
 }
 
-/* ──────────────────────────────
-   کامپوننت‌های کمکی
-────────────────────────────── */
 function Section({ title, children }) {
   return (
     <section>
-      <h2 className="text-xs font-semibold text-fg-muted mb-2 px-1">
+      <h2 className="text-xs font-semibold text-text-muted mb-2 px-1">
         {title}
       </h2>
-      <Card padded={false} className="overflow-hidden divide-y divide-border">
+      <Card padded={false} variant="raised-sm" className="overflow-hidden divide-y divide-border">
         {children}
       </Card>
     </section>
@@ -408,7 +391,7 @@ function Section({ title, children }) {
 
 function Row({
   icon: Icon,
-  color = '#D81B60',
+  color = 'var(--primary)',
   label,
   value,
   hint,
@@ -424,12 +407,16 @@ function Row({
       onClick={onClick}
       className={cn(
         'w-full flex items-center gap-3 px-4 py-3.5 text-right',
-        onClick && 'transition hover:bg-brand-soft/20 active:bg-brand-soft/40'
+        onClick && 'transition hover:bg-primary/5 active:bg-primary/10'
       )}
     >
       <div
         className="size-10 rounded-full flex items-center justify-center shrink-0"
-        style={{ backgroundColor: `${color}1A`, color }}
+        style={{
+          backgroundColor: `${color}15`,
+          color,
+          boxShadow: `inset 2px 2px 6px rgba(0,0,0,0.06), inset -2px -2px 6px rgba(255,255,255,0.7)`,
+        }}
       >
         <Icon size={18} strokeWidth={2.2} />
       </div>
@@ -437,24 +424,24 @@ function Row({
         <div
           className={cn(
             'font-medium text-[14.5px] truncate',
-            danger ? 'text-danger' : 'text-fg'
+            danger ? 'text-expense' : 'text-text'
           )}
         >
           {label}
         </div>
         {hint && (
-          <div className="text-[11px] text-fg-muted mt-0.5 truncate">
+          <div className="text-[11px] text-text-muted mt-0.5 truncate">
             {hint}
           </div>
         )}
       </div>
       {value && !right && (
-        <div className="text-[13px] text-fg-muted shrink-0">{value}</div>
+        <div className="text-[13px] text-text-muted shrink-0">{value}</div>
       )}
       {right && <div className="shrink-0">{right}</div>}
       {action && <div className="shrink-0">{action}</div>}
       {onClick && !right && !action && (
-        <ChevronLeft size={16} className="text-fg-muted shrink-0" />
+        <ChevronLeft size={16} className="text-text-muted shrink-0" />
       )}
     </Tag>
   )

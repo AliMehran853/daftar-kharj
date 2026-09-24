@@ -36,7 +36,7 @@ export default function HomePage() {
       <GreetingHeader />
 
       {loading ? (
-        <Skeleton className="h-64" rounded="rounded-[28px]" />
+        <Skeleton className="h-64" rounded="rounded-card-lg" />
       ) : (
         <BalanceHero balance={wallet} stats={monthStats} />
       )}
@@ -44,7 +44,7 @@ export default function HomePage() {
       <div className="grid grid-cols-2 gap-3">
         <StatCard
           icon={Banknote}
-          color="#6B4C93"
+          color="var(--saving)"
           label="پس‌انداز"
           value={loading ? '…' : formatMoney(savings)}
           unit={currency}
@@ -52,7 +52,7 @@ export default function HomePage() {
         />
         <StatCard
           icon={Calendar}
-          color="#D81B60"
+          color="var(--primary)"
           label="این ماه"
           value={loading ? '…' : toPersianDigits(monthStats?.txCount || 0)}
           unit="تراکنش"
@@ -60,24 +60,23 @@ export default function HomePage() {
         />
       </div>
 
-      {/* دو دکمه‌ی سریع — مصرف صورتی، درآمد سبز */}
+      {/* دو دکمه‌ی سریع */}
       <div className="grid grid-cols-2 gap-3">
-        {/* ثبت مصرف — صورتی */}
         <button
           onClick={() => openSheet('quick-add', { tab: 'expense' })}
-          className="h-14 rounded-btn flex items-center justify-center gap-2 font-medium transition press border"
+          className="h-14 rounded-btn flex items-center justify-center gap-2 font-medium transition press-sm"
           style={{
-            backgroundColor: 'var(--danger-soft)',
-            color: 'var(--danger)',
-            borderColor: 'color-mix(in srgb, var(--danger) 20%, transparent)',
+            background: 'var(--surface)',
+            boxShadow: 'var(--shadow-raised-sm)',
+            border: '1px solid var(--border)',
+            color: 'var(--expense)',
           }}
         >
           <div
             className="size-8 rounded-full text-white flex items-center justify-center"
             style={{
-              backgroundColor: 'var(--danger)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 6px rgba(185, 28, 74, 0.30)',
+              backgroundColor: 'var(--expense)',
+              boxShadow: '0 2px 6px rgba(240, 68, 120, 0.30)',
             }}
           >
             <Minus size={18} strokeWidth={2.6} />
@@ -85,22 +84,21 @@ export default function HomePage() {
           <span className="text-[14px]">ثبت مصرف</span>
         </button>
 
-        {/* درآمد جانبی — سبز */}
         <button
           onClick={() => openSheet('quick-add', { tab: 'income' })}
-          className="h-14 rounded-btn flex items-center justify-center gap-2 font-medium transition press border"
+          className="h-14 rounded-btn flex items-center justify-center gap-2 font-medium transition press-sm"
           style={{
-            backgroundColor: 'var(--success-soft)',
-            color: '#15803D',
-            borderColor: 'color-mix(in srgb, var(--success) 25%, transparent)',
+            background: 'var(--surface)',
+            boxShadow: 'var(--shadow-raised-sm)',
+            border: '1px solid var(--border)',
+            color: 'var(--income)',
           }}
         >
           <div
             className="size-8 rounded-full text-white flex items-center justify-center"
             style={{
-              backgroundColor: 'var(--success)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 6px rgba(22, 163, 74, 0.30)',
+              backgroundColor: 'var(--income)',
+              boxShadow: '0 2px 6px rgba(22, 165, 106, 0.30)',
             }}
           >
             <Plus size={18} strokeWidth={2.6} />
@@ -114,24 +112,24 @@ export default function HomePage() {
         onClick={() => navigate(ROUTES.REPORTS)}
         className="flex items-center gap-3"
       >
-        <div className="size-12 rounded-2xl bg-brand-soft text-brand flex items-center justify-center">
+        <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
           <BarChart3 size={22} />
         </div>
         <div className="flex-1">
-          <div className="font-semibold text-fg">گزارش‌های مالی</div>
-          <div className="text-xs text-fg-muted mt-0.5">
+          <div className="font-semibold text-text">گزارش‌های مالی</div>
+          <div className="text-xs text-text-muted mt-0.5">
             نمودار، تحلیل، روند
           </div>
         </div>
-        <ArrowLeft size={18} className="text-fg-muted" />
+        <ArrowLeft size={18} className="text-text-muted" />
       </Card>
 
       <section>
         <div className="flex items-center justify-between mb-2">
-          <h2 className="font-semibold text-fg">آخرین تراکنش‌ها</h2>
+          <h2 className="font-semibold text-text">آخرین تراکنش‌ها</h2>
           <button
             onClick={() => navigate(ROUTES.EXPENSES)}
-            className="text-sm text-brand font-medium"
+            className="text-sm text-primary font-medium"
           >
             نمایش همه
           </button>

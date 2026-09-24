@@ -21,17 +21,23 @@ export default function Switch({
       onClick={() => !disabled && onChange?.(!checked)}
       className={cn(
         'relative inline-flex shrink-0 items-center rounded-full',
-        'transition-colors duration-200 ease-out',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+        'transition-all duration-200 ease-out',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
+        'press-sm',
         dims.track,
-        checked ? 'bg-brand' : 'bg-border',
         disabled && 'opacity-50 pointer-events-none',
         className
       )}
+      style={{
+        background: checked ? 'var(--primary)' : 'var(--surface-deep)',
+        boxShadow: checked
+          ? 'inset 2px 2px 6px rgba(0,0,0,0.2), inset -2px -2px 6px rgba(255,255,255,0.1)'
+          : 'inset 2px 2px 6px rgba(0,0,0,0.08), inset -2px -2px 6px rgba(255,255,255,0.7)',
+      }}
     >
       <span
         className={cn(
-          'absolute top-1/2 -translate-y-1/2 rounded-full bg-white shadow-sm',
+          'absolute top-1/2 -translate-y-1/2 rounded-full bg-white shadow-md',
           'transition-transform duration-200 ease-out',
           'start-0.5',
           dims.thumb,

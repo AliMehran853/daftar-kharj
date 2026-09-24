@@ -16,17 +16,24 @@ const iconSizeMap = {
 
 export default function IconCircle({
   icon: Icon,
-  color = '#00B894',
+  color = 'var(--primary)',
   size = 'md',
-  variant = 'soft', // 'soft' = پس‌زمینه‌ی ملایم، 'solid' = پررنگ
+  variant = 'soft',
   className,
 }) {
   const iconSize = iconSizeMap[size]
 
   const style =
     variant === 'soft'
-      ? { backgroundColor: `${color}1A`, color }
-      : { backgroundColor: color, color: '#fff' }
+      ? {
+          backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)`,
+          color,
+        }
+      : {
+          backgroundColor: color,
+          color: '#fff',
+          boxShadow: `0 2px 6px ${color}40`,
+        }
 
   return (
     <div

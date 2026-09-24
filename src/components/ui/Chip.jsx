@@ -17,10 +17,19 @@ export default function Chip({
         'text-sm font-medium',
         'press-sm transition-all duration-200 select-none',
         active
-          ? 'bg-brand text-white shadow-brand border border-white/15'
-          : 'bg-card text-fg-secondary border border-border shadow-soft hover:bg-brand-soft/40 hover:border-border-strong',
+          ? 'text-white'
+          : 'text-text-secondary neu-raised-sm hover:shadow-raised',
         className
       )}
+      style={
+        active
+          ? {
+              background: 'var(--primary)',
+              boxShadow:
+                'inset 2px 2px 6px rgba(0,0,0,0.25), inset -2px -2px 6px rgba(255,255,255,0.08)',
+            }
+          : undefined
+      }
     >
       {Icon && <Icon size={15} />}
       {children}

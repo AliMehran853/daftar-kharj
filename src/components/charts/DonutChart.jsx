@@ -12,7 +12,7 @@ export default function DonutChart({
   data = [],
   labels = [],
   colors,
-  centerLabel,
+  centerLabel = 'مجموع مصارف',
   centerValue,
   height = 260,
 }) {
@@ -33,7 +33,7 @@ export default function DonutChart({
       colors: palette,
       stroke: {
         width: 2,
-        colors: [isDark ? '#12322E' : '#FFFFFF'],
+        colors: [isDark ? '#0D2036' : '#EAF2F7'],
       },
       plotOptions: {
         pie: {
@@ -41,28 +41,45 @@ export default function DonutChart({
             size: '72%',
             labels: {
               show: true,
-              name: { show: false }, // ← لیبل حذف شد
+              name: {
+                show: true,
+                fontSize: '11px',
+                fontFamily: getChartFontFamily(),
+                color: isDark ? '#91A9C4' : '#66809D',
+                offsetY: 18,
+              },
               value: {
                 show: true,
                 fontSize: '26px',
                 fontWeight: 700,
                 fontFamily: getChartFontFamily(),
-                color: isDark ? '#F1F7F5' : '#0F2620',
-                offsetY: 0,
+                color: isDark ? '#F2F7FF' : '#142A47',
+                offsetY: -8,
                 formatter: (v) =>
                   centerValue !== undefined
                     ? centerValue
                     : toPersianDigits(Math.round(Number(v))),
               },
               total: {
-                show: false, // ← مجموع هم حذف شد از داخل
+                show: true,
+                showAlways: true,
+                label: centerLabel,
+                fontSize: '11px',
+                fontFamily: getChartFontFamily(),
+                color: isDark ? '#91A9C4' : '#66809D',
+                formatter: () =>
+                  centerValue !== undefined
+                    ? centerValue
+                    : toPersianDigits(
+                        Math.round(data.reduce((a, b) => a + (Number(b) || 0), 0))
+                      ),
               },
             },
           },
         },
       },
-      legend: { show: false },
       dataLabels: { enabled: false },
+      legend: { show: false },
       tooltip: {
         ...base.tooltip,
         y: {
@@ -70,7 +87,7 @@ export default function DonutChart({
         },
       },
     }
-  }, [data, labels, colors, isDark, centerValue])
+  }, [data, labels, colors, isDark, centerLabel, centerValue])
 
   if (!data.length || data.every((v) => !v)) {
     return (
@@ -84,15 +101,6 @@ export default function DonutChart({
   }
 
   return (
-    <div className="w-full">
-      {/* لیبل بالای دونات */}
-      {centerLabel && (
-        <div className="text-center text-[12px] font-medium text-fg-muted mb-2">
-          {centerLabel}
-        </div>
-      )}
-
-      <Chart type="donut" height={height} options={options} series={data} />
-    </div>
+    <Chart type="donut" height={height} options={options} series={data} />
   )
 }

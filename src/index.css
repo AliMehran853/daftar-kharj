@@ -43,133 +43,160 @@
 }
 
 /* ─────────────────────────────────────────────
-   حالت روشن
+   Light Mode — DK Soft Light
+   highlight ملایم‌تر، blur کمتر روی المان‌های بزرگ
    ───────────────────────────────────────────── */
 :root {
-  --bg: #FAF6F9;
-  --bg-elevated: #FFFFFF;
-  --card: #FFFFFF;
-  --border: rgba(216, 27, 96, 0.08);
-  --border-strong: rgba(216, 27, 96, 0.14);
+  --bg: #E8F0F6;
+  --surface: #EAF2F7;
+  --surface-high: #EEF5F9;
+  --surface-deep: #E1EAF1;
 
-  --brand: #D81B60;
-  --brand-dark: #A83279;
-  --brand-light: #F06292;
-  --brand-soft: #FCE4EC;
+  --primary: #183B70;
+  --primary-soft: #315B95;
+  --primary-faded: #5B7BA8;
 
-  --info: #6B4C93;
-  --info-dark: #5A3F7D;
-  --info-soft: #EFE7F5;
+  --text: #142A47;
+  --text-secondary: #66809D;
+  --text-muted: #91A6BA;
 
-  --accent: #8E24AA;
-  --accent-dark: #7B1FA2;
-  --accent-soft: #F3E5F5;
+  --income: #16A56A;
+  --income-soft: #BFEEDD;
+  --expense: #F04478;
+  --expense-soft: #FFD1DE;
+  --saving: #7457D9;
+  --saving-soft: #DDD5FF;
+  --info: #3299E8;
+  --info-soft: #CFEAFF;
+  --warning: #F5A623;
+  --warning-soft: #FFE5B5;
 
-  --danger: #B91C4A;
-  --danger-soft: #FCE4EC;
+  /* highlight ملایم‌تر — قبلاً 1 بود، حالا 0.72 */
+  --neu-light: rgba(255, 255, 255, 0.72);
+  --neu-dark: rgba(163, 177, 191, 0.55);
 
-  --success: #16A34A;
-  --success-soft: #DCFCE7;
+  /* Raised عادی — برای کارت‌های کوچک و متوسط */
+  --shadow-raised:
+    -5px -5px 14px var(--neu-light),
+    5px 5px 14px var(--neu-dark);
 
-  --fg: #1A0F1F;
-  --fg-secondary: #6B3B54;
-  --fg-muted: #9C7A88;
+  --shadow-raised-sm:
+    -3px -3px 8px var(--neu-light),
+    3px 3px 8px var(--neu-dark);
 
-  /* سایه‌های سه‌بعدی — لایه‌ای */
-  --shadow-soft:
-    0 1px 2px rgba(26, 15, 31, 0.04),
-    0 4px 12px rgba(26, 15, 31, 0.05);
+  /* Raised-lg — برای Modal/Sheet — highlight ظریف‌تر و blur کمتر */
+  --shadow-raised-lg:
+    -6px -6px 16px rgba(255, 255, 255, 0.55),
+    8px 8px 20px rgba(163, 177, 191, 0.42);
 
-  --shadow-card:
-    0 1px 2px rgba(26, 15, 31, 0.05),
-    0 6px 16px rgba(26, 15, 31, 0.07),
-    0 16px 32px rgba(26, 15, 31, 0.06);
+  --shadow-inset:
+    inset 4px 4px 10px var(--neu-dark),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.55);
 
-  --shadow-float:
-    0 2px 4px rgba(26, 15, 31, 0.06),
-    0 12px 28px rgba(26, 15, 31, 0.10),
-    0 32px 64px rgba(26, 15, 31, 0.10);
+  --shadow-inset-sm:
+    inset 2px 2px 6px var(--neu-dark),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.55);
 
-  --shadow-brand:
-    0 2px 6px rgba(216, 27, 96, 0.18),
-    0 8px 20px rgba(216, 27, 96, 0.22),
-    0 20px 40px rgba(216, 27, 96, 0.14);
+  --shadow-flat: 0 1px 2px rgba(20, 42, 71, 0.04);
 
-  --shadow-info:
-    0 2px 6px rgba(107, 76, 147, 0.18),
-    0 8px 20px rgba(107, 76, 147, 0.22),
-    0 20px 40px rgba(107, 76, 147, 0.14);
+  --fab-shadow:
+    0 4px 12px rgba(24, 59, 112, 0.30),
+    0 12px 28px rgba(24, 59, 112, 0.20),
+    0 20px 40px rgba(24, 59, 112, 0.15);
 
-  /* highlight لبه‌ی بالا */
-  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  --highlight-top-subtle: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --hero-shadow:
+    0 4px 12px rgba(24, 59, 112, 0.15),
+    0 16px 40px rgba(24, 59, 112, 0.12),
+    0 32px 64px rgba(24, 59, 112, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
-  --gradient-brand: linear-gradient(135deg, #D81B60 0%, #8E24AA 100%);
-  --gradient-savings: linear-gradient(135deg, #6B4C93 0%, #8E24AA 100%);
+  --savings-hero-shadow:
+    0 4px 14px rgba(70, 40, 160, 0.28),
+    0 14px 36px rgba(70, 40, 160, 0.22),
+    0 28px 56px rgba(70, 40, 160, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+
+  --border: rgba(102, 128, 157, 0.12);
+  --border-strong: rgba(102, 128, 157, 0.20);
+
+  --gradient-brand: linear-gradient(135deg, #183B70 0%, #315B95 100%);
+  --gradient-savings: linear-gradient(135deg, #7457D9 0%, #5B44A8 100%);
 }
 
 /* ─────────────────────────────────────────────
-   حالت تاریک
+   Dark Mode — DK Deep Dark
+   سایه‌های تیره (نه روشن) — بازگشت به نسخه‌ی قبلی
    ───────────────────────────────────────────── */
 .dark {
-  --bg: #1A0F1F;
-  --bg-elevated: #2A1629;
-  --card: #2A1629;
-  --border: rgba(233, 30, 99, 0.15);
-  --border-strong: rgba(233, 30, 99, 0.25);
+  --bg: #071321;
+  --surface: #0D2036;
+  --surface-high: #122A45;
+  --surface-deep: #051020;
 
-  --brand: #E91E63;
-  --brand-dark: #C2185B;
-  --brand-light: #F06292;
-  --brand-soft: rgba(233, 30, 99, 0.15);
+  --primary: #3E78D4;
+  --primary-soft: #5B9CFF;
+  --primary-faded: #2A5A9E;
 
-  --info: #8E7AB5;
-  --info-dark: #7A66A5;
-  --info-soft: rgba(142, 122, 181, 0.15);
+  --text: #F2F7FF;
+  --text-secondary: #91A9C4;
+  --text-muted: #607A96;
 
-  --accent: #B24BCC;
-  --accent-dark: #9C27B0;
-  --accent-soft: rgba(178, 75, 204, 0.15);
+  --income: #32D99A;
+  --income-soft: rgba(50, 217, 154, 0.15);
+  --expense: #FF4F83;
+  --expense-soft: rgba(255, 79, 131, 0.15);
+  --saving: #8B6CFF;
+  --saving-soft: rgba(139, 108, 255, 0.15);
+  --info: #42A9FF;
+  --info-soft: rgba(66, 169, 255, 0.15);
+  --warning: #FFB638;
+  --warning-soft: rgba(255, 182, 56, 0.15);
 
-  --danger: #F06292;
-  --danger-soft: rgba(240, 98, 146, 0.15);
+  /* سایه‌های تیره‌ی هم‌خانواده Navy */
+  --shadow-raised:
+    0 1px 2px rgba(2, 6, 18, 0.55),
+    0 4px 12px rgba(2, 6, 18, 0.45),
+    0 12px 24px rgba(2, 6, 18, 0.32);
 
-  --success: #34D399;
-  --success-soft: rgba(52, 211, 153, 0.15);
+  --shadow-raised-sm:
+    0 1px 2px rgba(2, 6, 18, 0.50),
+    0 3px 8px rgba(2, 6, 18, 0.38);
 
-  --fg: #FAF5F7;
-  --fg-secondary: #C4A8B4;
-  --fg-muted: #8A6E7A;
+  --shadow-raised-lg:
+    0 2px 4px rgba(2, 6, 18, 0.55),
+    0 8px 20px rgba(2, 6, 18, 0.45),
+    0 20px 40px rgba(2, 6, 18, 0.32);
 
-  --shadow-soft:
-    0 1px 2px rgba(0, 0, 0, 0.30),
-    0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-inset:
+    inset 0 2px 6px rgba(0, 6, 20, 0.65),
+    inset 0 -1px 2px rgba(2, 6, 18, 0.40);
 
-  --shadow-card:
-    0 1px 2px rgba(0, 0, 0, 0.35),
-    0 6px 16px rgba(0, 0, 0, 0.35),
-    0 16px 32px rgba(0, 0, 0, 0.30);
+  --shadow-inset-sm:
+    inset 0 1px 3px rgba(0, 6, 20, 0.55),
+    inset 0 -1px 2px rgba(2, 6, 18, 0.35);
 
-  --shadow-float:
-    0 2px 4px rgba(0, 0, 0, 0.40),
-    0 12px 28px rgba(0, 0, 0, 0.45),
-    0 32px 64px rgba(0, 0, 0, 0.50);
+  --shadow-flat: 0 1px 2px rgba(2, 6, 18, 0.40);
 
-  --shadow-brand:
-    0 2px 6px rgba(233, 30, 99, 0.25),
-    0 8px 20px rgba(233, 30, 99, 0.30),
-    0 20px 40px rgba(233, 30, 99, 0.20);
+  --fab-shadow:
+    0 4px 10px rgba(2, 6, 18, 0.55),
+    0 12px 28px rgba(2, 6, 18, 0.45),
+    0 0 32px rgba(62, 120, 212, 0.28);
 
-  --shadow-info:
-    0 2px 6px rgba(142, 122, 181, 0.25),
-    0 8px 20px rgba(142, 122, 181, 0.30),
-    0 20px 40px rgba(142, 122, 181, 0.20);
+  --hero-shadow:
+    0 4px 12px rgba(2, 6, 18, 0.45),
+    0 16px 40px rgba(2, 6, 18, 0.45),
+    0 32px 64px rgba(2, 6, 18, 0.32);
 
-  --highlight-top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --highlight-top-subtle: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --savings-hero-shadow:
+    0 4px 12px rgba(2, 6, 18, 0.45),
+    0 16px 40px rgba(2, 6, 18, 0.45),
+    0 32px 64px rgba(2, 6, 18, 0.32);
 
-  --gradient-brand: linear-gradient(135deg, #E91E63 0%, #B24BCC 100%);
-  --gradient-savings: linear-gradient(135deg, #8E7AB5 0%, #B24BCC 100%);
+  --border: rgba(91, 156, 255, 0.05);
+  --border-strong: rgba(91, 156, 255, 0.10);
+
+  --gradient-brand: linear-gradient(135deg, #1F4A8F 0%, #2E68B8 100%);
+  --gradient-savings: linear-gradient(135deg, #6B4FB3 0%, #48358A 100%);
 }
 
 /* ─────────────────────────────────────────────
@@ -179,43 +206,64 @@
   --font-sans: 'Vazirmatn', system-ui, -apple-system, sans-serif;
 
   --color-bg: var(--bg);
-  --color-bg-elevated: var(--bg-elevated);
-  --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-surface-high: var(--surface-high);
+  --color-surface-deep: var(--surface-deep);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
 
-  --color-brand: var(--brand);
-  --color-brand-dark: var(--brand-dark);
-  --color-brand-light: var(--brand-light);
-  --color-brand-soft: var(--brand-soft);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-faded: var(--primary-faded);
 
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-income: var(--income);
+  --color-income-soft: var(--income-soft);
+  --color-expense: var(--expense);
+  --color-expense-soft: var(--expense-soft);
+  --color-saving: var(--saving);
+  --color-saving-soft: var(--saving-soft);
   --color-info: var(--info);
-  --color-info-dark: var(--info-dark);
   --color-info-soft: var(--info-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
 
-  --color-accent: var(--accent);
-  --color-accent-dark: var(--accent-dark);
-  --color-accent-soft: var(--accent-soft);
+  --color-card: var(--surface);
+  --color-bg-elevated: var(--surface-high);
+  --color-fg: var(--text);
+  --color-fg-secondary: var(--text-secondary);
+  --color-fg-muted: var(--text-muted);
 
-  --color-danger: var(--danger);
-  --color-danger-soft: var(--danger-soft);
+  --color-brand: var(--primary);
+  --color-brand-dark: var(--primary-soft);
+  --color-brand-light: var(--primary-faded);
+  --color-brand-soft: color-mix(in srgb, var(--primary) 12%, transparent);
 
-  --color-success: var(--success);
-  --color-success-soft: var(--success-soft);
-
-  --color-fg: var(--fg);
-  --color-fg-secondary: var(--fg-secondary);
-  --color-fg-muted: var(--fg-muted);
+  --color-danger: var(--expense);
+  --color-danger-soft: color-mix(in srgb, var(--expense) 15%, transparent);
+  --color-success: var(--income);
+  --color-success-soft: color-mix(in srgb, var(--income) 15%, transparent);
+  --color-accent: var(--saving);
+  --color-accent-dark: color-mix(in srgb, var(--saving) 80%, black);
+  --color-accent-soft: color-mix(in srgb, var(--saving) 15%, transparent);
+  --color-info-dark: color-mix(in srgb, var(--info) 80%, black);
 
   --radius-card: 24px;
   --radius-card-lg: 28px;
-  --radius-btn: 14px;
+  --radius-card-sm: 18px;
+  --radius-btn: 18px;
 
-  --shadow-soft: var(--shadow-soft);
-  --shadow-card: var(--shadow-card);
-  --shadow-float: var(--shadow-float);
-  --shadow-brand: var(--shadow-brand);
-  --shadow-info: var(--shadow-info);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-raised-sm: var(--shadow-raised-sm);
+  --shadow-raised-lg: var(--shadow-raised-lg);
+  --shadow-inset: var(--shadow-inset);
+  --shadow-inset-sm: var(--shadow-inset-sm);
+  --shadow-flat: var(--shadow-flat);
+  --shadow-fab: var(--fab-shadow);
+  --shadow-hero: var(--hero-shadow);
 }
 
 /* ─────────────────────────────────────────────
@@ -234,7 +282,7 @@
   body {
     font-family: var(--font-sans);
     background: var(--bg);
-    color: var(--fg);
+    color: var(--text);
     min-height: 100dvh;
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
@@ -263,44 +311,38 @@
 }
 
 /* ─────────────────────────────────────────────
-   Utility — Glassmorphism
+   Neumorphic Utilities
    ───────────────────────────────────────────── */
-@utility glass {
-  background: color-mix(in srgb, var(--card) 72%, transparent);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+@utility neu-raised {
+  background: var(--surface);
+  box-shadow: var(--shadow-raised);
 }
 
-@utility glass-strong {
-  background: color-mix(in srgb, var(--card) 82%, transparent);
-  backdrop-filter: saturate(200%) blur(28px);
-  -webkit-backdrop-filter: saturate(200%) blur(28px);
-  border: 1px solid color-mix(in srgb, var(--fg) 6%, transparent);
-  box-shadow:
-    var(--highlight-top-subtle),
-    var(--shadow-float);
+@utility neu-raised-sm {
+  background: var(--surface);
+  box-shadow: var(--shadow-raised-sm);
 }
 
-/* ─────────────────────────────────────────────
-   Utility — 3D Depth
-   ───────────────────────────────────────────── */
-@utility depth-card {
-  box-shadow: var(--highlight-top-subtle), var(--shadow-card);
+@utility neu-raised-lg {
+  background: var(--surface);
+  box-shadow: var(--shadow-raised-lg);
 }
 
-@utility depth-float {
-  box-shadow: var(--highlight-top-subtle), var(--shadow-float);
+@utility neu-inset {
+  background: var(--surface-deep);
+  box-shadow: var(--shadow-inset);
 }
 
-@utility depth-brand {
-  box-shadow: var(--highlight-top-subtle), var(--shadow-brand);
+@utility neu-inset-sm {
+  background: var(--surface-deep);
+  box-shadow: var(--shadow-inset-sm);
 }
 
-@utility depth-info {
-  box-shadow: var(--highlight-top-subtle), var(--shadow-info);
+@utility neu-flat {
+  background: var(--surface);
+  box-shadow: var(--shadow-flat);
 }
 
-/* press — فشردن نرم سه‌بعدی */
 @utility press {
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -312,7 +354,7 @@
 @utility press-sm {
   transition: transform 0.12s ease-out;
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
 }
 
@@ -320,23 +362,16 @@
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   &:active {
-    transform: translateY(2px) scale(0.98);
+    transform: translateY(2px) scale(0.97);
   }
 }
 
-/* ─────────────────────────────────────────────
-   Utility — گرادیان‌ها
-   ───────────────────────────────────────────── */
-@utility bg-gradient-brand {
-  background: var(--gradient-brand);
-}
-@utility bg-gradient-savings {
-  background: var(--gradient-savings);
+@utility glass {
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
-/* ─────────────────────────────────────────────
-   Utility — عمومی
-   ───────────────────────────────────────────── */
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
@@ -347,4 +382,11 @@
 }
 @utility pb-safe {
   padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+
+@utility bg-gradient-brand {
+  background: var(--gradient-brand);
+}
+@utility bg-gradient-savings {
+  background: var(--gradient-savings);
 }

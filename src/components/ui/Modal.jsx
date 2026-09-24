@@ -36,13 +36,11 @@ export default function Modal({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {/* Backdrop شیشه‌ای */}
           <div
-            className="absolute inset-0 backdrop-blur-md bg-black/40"
+            className="absolute inset-0 backdrop-blur-md bg-black/30"
             onClick={closeOnBackdrop ? onClose : undefined}
           />
 
-          {/* کارت مودال با عمق سه‌بعدی */}
           <motion.div
             role="dialog"
             aria-modal="true"
@@ -52,27 +50,22 @@ export default function Modal({
             transition={{ type: 'spring', stiffness: 340, damping: 30 }}
             className={cn(
               'relative w-full max-w-md',
-              'bg-card rounded-card-lg',
-              'border border-border',
+              'neu-raised-lg rounded-card-lg',
               'p-5',
               className
             )}
-            style={{
-              boxShadow:
-                'inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 4px 12px rgba(26, 15, 31, 0.10), 0 20px 48px rgba(26, 15, 31, 0.18), 0 48px 96px rgba(26, 15, 31, 0.12)',
-            }}
           >
             {(title || showClose) && (
               <div className="flex items-center justify-between mb-4">
                 {title ? (
-                  <h2 className="text-lg font-semibold text-fg">{title}</h2>
+                  <h2 className="text-lg font-semibold text-text">{title}</h2>
                 ) : (
                   <div />
                 )}
                 {showClose && (
                   <button
                     onClick={onClose}
-                    className="size-9 rounded-full hover:bg-brand-soft flex items-center justify-center text-fg-muted transition press-sm"
+                    className="size-9 rounded-full neu-raised-sm flex items-center justify-center text-text-muted transition press-sm"
                     aria-label="بستن"
                   >
                     <X size={18} />

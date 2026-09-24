@@ -3,21 +3,21 @@ import { Loader2 } from 'lucide-react'
 
 const variants = {
   primary:
-    'bg-brand text-white shadow-brand border border-white/10 hover:bg-brand-dark',
+    'bg-gradient-brand text-white shadow-raised-sm hover:shadow-raised active:shadow-inset-sm',
   secondary:
-    'bg-card text-fg border border-border shadow-soft hover:bg-brand-soft/40 hover:border-border-strong',
+    'neu-raised-sm text-text hover:shadow-raised active:shadow-inset-sm',
   danger:
-    'bg-danger text-white shadow-md border border-white/10 hover:opacity-95',
+    'bg-expense text-white shadow-raised-sm hover:shadow-raised active:shadow-inset-sm',
   ghost:
-    'bg-transparent text-fg hover:bg-brand-soft/40',
+    'bg-transparent text-text hover:bg-surface-high active:bg-surface-deep',
   outline:
-    'bg-transparent text-brand border border-brand hover:bg-brand-soft/40',
+    'bg-transparent text-primary border border-primary/25 hover:bg-primary/5 active:bg-primary/10',
 }
 
 const sizes = {
-  sm: 'h-9 px-3 text-sm rounded-[12px] gap-1.5',
+  sm: 'h-9 px-3 text-sm rounded-card-sm gap-1.5',
   md: 'h-11 px-4 text-[15px] rounded-btn gap-2',
-  lg: 'h-14 px-6 text-base rounded-[18px] gap-2.5',
+  lg: 'h-14 px-6 text-base rounded-card gap-2.5',
 }
 
 export default function Button({
@@ -39,10 +39,8 @@ export default function Button({
       disabled={isDisabled}
       className={cn(
         'relative inline-flex items-center justify-center font-medium',
-        'press',
-        'select-none',
+        'press-sm select-none',
         'disabled:opacity-50 disabled:pointer-events-none',
-        'active:shadow-none',
         variants[variant],
         sizes[size],
         full && 'w-full',

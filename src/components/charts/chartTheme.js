@@ -1,32 +1,31 @@
 import { toPersianDigits } from '@/lib/utils'
 
 export const CHART_COLORS = [
-  '#00B894',
-  '#4A9FE8',
-  '#F59E0B',
-  '#8B5CF6',
-  '#EC4899',
-  '#EF4444',
-  '#06B6D4',
-  '#10B981',
-  '#F472B6',
-  '#6B7280',
+  '#183B70', // Navy primary
+  '#7457D9', // Purple saving
+  '#16A56A', // Green income
+  '#F04478', // Pink expense
+  '#3299E8', // Blue info
+  '#F5A623', // Orange warning
+  '#5B9CFF', // Light blue
+  '#8B6CFF', // Light purple
+  '#FF4F83', // Light pink
+  '#91A6BA', // Muted
 ]
 
-export const INCOME_COLOR = '#00B894'
-export const EXPENSE_COLOR = '#E74C3C'
-export const SAVINGS_COLOR = '#4A9FE8'
+export const INCOME_COLOR = '#16A56A'
+export const EXPENSE_COLOR = '#F04478'
+export const SAVINGS_COLOR = '#7457D9'
 
-/** فونت مشترک برای همه‌ی چارت‌ها */
 export function getChartFontFamily() {
   return 'Vazirmatn, system-ui, sans-serif'
 }
 
-/** رنگ‌های سراسری برای همه‌ی چارت‌ها */
 export function getBaseOptions({ dark = false } = {}) {
-  const textColor = dark ? '#B8CCC7' : '#4A6660'
-  const mutedColor = dark ? '#7F9C96' : '#7F9C96'
-  const gridColor = dark ? 'rgba(0, 209, 167, 0.10)' : 'rgba(15, 38, 32, 0.06)'
+  const textColor = dark ? '#91A9C4' : '#66809D'
+  const gridColor = dark
+    ? 'rgba(91, 156, 255, 0.08)'
+    : 'rgba(24, 59, 112, 0.06)'
 
   return {
     chart: {
@@ -73,13 +72,9 @@ export function getBaseOptions({ dark = false } = {}) {
   }
 }
 
-/** یه آرایه از اعداد فارسی برای محور */
 export function persianTickFormatter(value) {
-  if (value >= 1000000) return `${toPersianDigits((value / 1000000).toFixed(1))}م`
+  if (value >= 1000000)
+    return `${toPersianDigits((value / 1000000).toFixed(1))}م`
   if (value >= 1000) return `${toPersianDigits(Math.round(value / 1000))}هـ`
-  return toPersianDigits(Math.round(value))
-}
-
-export function toPersianNumberFormatter(value) {
   return toPersianDigits(Math.round(value))
 }

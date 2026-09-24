@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { Delete, Fingerprint, KeyRound } from 'lucide-react'
+import { Delete, Fingerprint, KeyRound, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PIN_LENGTH } from '@/data/constants'
 import { verifyPin, verifyBiometric } from '@/lib/auth'
@@ -20,7 +20,6 @@ export default function LockPage() {
   const [shake, setShake] = useState(false)
   const [busy, setBusy] = useState(false)
 
-  /* تلاش برای اثر انگشت هنگام mount */
   useEffect(() => {
     if (biometricEnabled && mode === 'biometric') {
       const t = setTimeout(() => {
@@ -31,7 +30,6 @@ export default function LockPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  /* وقتی ۴ رقم پر شد */
   useEffect(() => {
     if (pin.length !== PIN_LENGTH || mode !== 'pin') return
     const complete = async () => {
@@ -83,19 +81,22 @@ export default function LockPage() {
     <div className="min-h-dvh bg-bg flex flex-col items-center justify-between px-6 py-10 pt-safe pb-safe">
       {/* لوگو + عنوان */}
       <div className="flex flex-col items-center pt-6">
-        <img
-          src="/icons/logo.png"
-          alt="دفتر خرج"
-          className="size-20 rounded-3xl bg-brand-soft object-cover shadow-brand"
-          onError={(e) => (e.currentTarget.style.display = 'none')}
-        />
-        <h1 className="mt-4 text-2xl font-bold text-fg">دفتر خرج</h1>
-        <p className="mt-1.5 text-xs text-fg-muted">
+        <div
+          className="size-20 rounded-3xl flex items-center justify-center"
+          style={{
+            background: 'var(--gradient-brand)',
+            boxShadow: 'var(--shadow-raised)',
+          }}
+        >
+          <span className="text-4xl text-white">💰</span>
+        </div>
+        <h1 className="mt-4 text-2xl font-bold text-text">دفتر خرج</h1>
+        <p className="mt-1.5 text-xs text-text-muted">
           مدیریت معاش و خرج‌های روزانه
         </p>
       </div>
 
-      {/* بخش مرکزی: PIN یا اثر انگشت */}
+      {/* بخش مرکزی */}
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-xs">
         {mode === 'biometric' ? (
           <BiometricView
@@ -119,7 +120,7 @@ export default function LockPage() {
       </div>
 
       {/* پاصفحه */}
-      <div className="text-[11px] text-fg-muted">
+      <div className="text-[11px] text-text-muted">
         ساخته شده با ❤ در افغانستان
       </div>
     </div>
@@ -132,41 +133,57 @@ export default function LockPage() {
 function PinView({ pin, error, shake, onKey, busy, onSwitchToBiometric }) {
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="flex items-center gap-2 text-fg-secondary mb-2">
-        <KeyRound size={16} />
+      {/* عنوان با آیکون */}
+      <div className="flex items-center gap-2 text-text-secondary mb-6">
+        <KeyRound size={15} />
         <span className="text-sm font-medium">رمز ۴ رقمی را وارد کن</span>
       </div>
 
+      {/* نقطه‌ها */}
       <motion.div
         animate={shake ? { x: [0, -10, 10, -8, 8, 0] } : { x: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex justify-center gap-4 my-6"
+        className="flex justify-center gap-4 mb-3"
       >
         {Array.from({ length: PIN_LENGTH }).map((_, i) => (
           <div
             key={i}
             className={cn(
-              'size-4 rounded-full border-2 transition-all duration-200',
-              error
-                ? 'bg-danger border-danger'
-                : i < pin.length
-                  ? 'bg-brand border-brand scale-110'
-                  : 'bg-transparent border-border'
+              'size-3.5 rounded-full transition-all duration-200'
             )}
+            style={
+              error
+                ? {
+                    background: 'var(--expense)',
+                    boxShadow: '0 0 12px rgba(240, 68, 120, 0.6)',
+                  }
+                : i < pin.length
+                  ? {
+                      background: 'var(--primary)',
+                      boxShadow: '0 0 12px rgba(62, 120, 212, 0.5)',
+                      transform: 'scale(1.1)',
+                    }
+                  : {
+                      background: 'transparent',
+                      border: '2px solid var(--border-strong)',
+                    }
+            }
           />
         ))}
       </motion.div>
 
+      {/* پیام خطا */}
       <div
         className={cn(
-          'text-xs mb-4 h-4 transition-colors',
-          error ? 'text-danger' : 'text-transparent'
+          'text-xs mb-6 h-4 transition-colors',
+          error ? 'text-expense' : 'text-transparent'
         )}
       >
         {error || '.'}
       </div>
 
-      <div className="grid grid-cols-3 gap-2 w-full max-w-[260px]">
+      {/* کیبورد نئومورفیک */}
+      <div className="grid grid-cols-3 gap-3 w-full max-w-[260px]">
         {KEYS.map((k, idx) => {
           if (k === '') return <div key={idx} />
           if (k === 'del') {
@@ -174,7 +191,12 @@ function PinView({ pin, error, shake, onKey, busy, onSwitchToBiometric }) {
               <button
                 key={idx}
                 onClick={() => onKey('del')}
-                className="h-14 rounded-2xl flex items-center justify-center text-fg-muted hover:bg-brand-soft transition active:scale-95"
+                className="h-16 rounded-2xl flex items-center justify-center transition press-sm"
+                style={{
+                  background: 'transparent',
+                  color: 'var(--text-muted)',
+                }}
+                aria-label="حذف"
               >
                 <Delete size={22} />
               </button>
@@ -186,10 +208,15 @@ function PinView({ pin, error, shake, onKey, busy, onSwitchToBiometric }) {
               onClick={() => onKey(k)}
               disabled={busy}
               className={cn(
-                'h-14 rounded-2xl bg-card border border-border',
-                'text-2xl font-semibold text-fg',
-                'transition active:scale-95 disabled:opacity-40'
+                'h-16 rounded-2xl transition press-sm',
+                'text-2xl font-semibold',
+                'disabled:opacity-40'
               )}
+              style={{
+                background: 'var(--surface)',
+                boxShadow: 'var(--shadow-raised-sm)',
+                color: 'var(--text)',
+              }}
             >
               {FA_DIGITS[Number(k)]}
             </button>
@@ -197,10 +224,11 @@ function PinView({ pin, error, shake, onKey, busy, onSwitchToBiometric }) {
         })}
       </div>
 
+      {/* دکمه‌ی سوییچ به اثر انگشت */}
       {onSwitchToBiometric && (
         <button
           onClick={onSwitchToBiometric}
-          className="mt-6 text-sm text-brand font-medium flex items-center gap-1.5"
+          className="mt-8 text-sm text-primary font-medium flex items-center gap-1.5 transition press-sm"
         >
           <Fingerprint size={16} />
           <span>ورود با اثر انگشت</span>
@@ -221,19 +249,26 @@ function BiometricView({ onTry, onSwitchToPin, busy, error }) {
         disabled={busy}
         className={cn(
           'relative size-32 rounded-full flex items-center justify-center',
-          'bg-brand-soft text-brand',
-          'transition active:scale-95 disabled:opacity-60'
+          'transition press',
+          'disabled:opacity-60'
         )}
+        style={{
+          background: 'var(--surface)',
+          boxShadow: 'var(--shadow-raised)',
+          color: 'var(--primary)',
+        }}
       >
         {/* حلقه‌های متحرک */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-brand/30"
-          animate={{ scale: [1, 1.35, 1], opacity: [0.7, 0, 0.7] }}
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{ border: '2px solid var(--primary)', opacity: 0.25 }}
+          animate={{ scale: [1, 1.35, 1], opacity: [0.4, 0, 0.4] }}
           transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }}
         />
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-brand/30"
-          animate={{ scale: [1, 1.35, 1], opacity: [0.7, 0, 0.7] }}
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{ border: '2px solid var(--primary)', opacity: 0.25 }}
+          animate={{ scale: [1, 1.35, 1], opacity: [0.4, 0, 0.4] }}
           transition={{
             duration: 2.4,
             repeat: Infinity,
@@ -244,14 +279,14 @@ function BiometricView({ onTry, onSwitchToPin, busy, error }) {
         <Fingerprint size={56} strokeWidth={1.8} />
       </button>
 
-      <p className="mt-6 text-sm font-medium text-fg">
+      <p className="mt-6 text-sm font-medium text-text">
         {busy ? 'در حال بررسی…' : 'برای ورود، اثر انگشت بزن'}
       </p>
 
       <div
         className={cn(
           'text-xs mt-2 h-4 transition-colors',
-          error ? 'text-danger' : 'text-transparent'
+          error ? 'text-expense' : 'text-transparent'
         )}
       >
         {error || '.'}
@@ -260,7 +295,7 @@ function BiometricView({ onTry, onSwitchToPin, busy, error }) {
       {onSwitchToPin && (
         <button
           onClick={onSwitchToPin}
-          className="mt-4 text-sm text-brand font-medium flex items-center gap-1.5"
+          className="mt-4 text-sm text-primary font-medium flex items-center gap-1.5 transition press-sm"
         >
           <KeyRound size={16} />
           <span>ورود با رمز عبور</span>

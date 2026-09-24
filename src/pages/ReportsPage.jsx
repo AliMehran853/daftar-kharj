@@ -32,6 +32,7 @@ import PeriodPicker from '@/components/app/PeriodPicker'
 import PeriodNavigator from '@/components/app/PeriodNavigator'
 import StatSmallCard from '@/components/app/StatSmallCard'
 import DonutChart from '@/components/charts/DonutChart'
+import BarChart from '@/components/charts/BarChart'
 import LineChart from '@/components/charts/LineChart'
 import Card from '@/components/ui/Card'
 import Skeleton from '@/components/ui/Skeleton'
@@ -48,6 +49,24 @@ const TABS = [
 const DAY_WIDTH = 48
 const TOTAL_DAYS = 30
 
+const INCOME_COLOR = '#16A56A'
+const EXPENSE_COLOR = '#F04478'
+const SAVING_COLOR = '#7457D9'
+
+/* نام کامل روزهای هفته */
+const WEEKDAY_LABELS = [
+  'شنبه',
+  'یک‌شنبه',
+  'دوشنبه',
+  'سه‌شنبه',
+  'چهارشنبه',
+  'پنج‌شنبه',
+  'جمعه',
+]
+
+/* حرف اول روزها — برای فضای کم */
+const WEEKDAY_SHORT = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج']
+
 function getRange(date, period) {
   if (period === PERIODS.DAILY) {
     return { start: startOfDay(date), end: endOfDay(date) }
@@ -62,14 +81,16 @@ function getRange(date, period) {
 }
 
 function getBucketCount(period) {
-  if (period === PERIODS.DAILY) return 1
+  if (period === PERIODS.DAILY) return 7
   if (period === PERIODS.WEEKLY) return 7
   return TOTAL_DAYS
 }
 
 function getBucketIndex(date, period) {
   if (period === PERIODS.MONTHLY) return getDate(date) - 1
-  if (period === PERIODS.WEEKLY) return (date.getDay() + 1) % 7
+  if (period === PERIODS.WEEKLY || period === PERIODS.DAILY) {
+    return (date.getDay() + 1) % 7
+  }
   return 0
 }
 
@@ -121,8 +142,7 @@ export default function ReportsPage() {
         stats,
         periodLabel: getPeriodLabel(selectedDate, period),
         periodTitle: getPeriodTitle(period),
-        savingsDelta:
-          (stats.toSavings || 0) - (stats.fromSavings || 0),
+        savingsDelta: (stats.toSavings || 0) - (stats.fromSavings || 0),
       })
       printHtml(html)
       showToast('پنجره‌ی چاپ باز شد', 'success')
@@ -142,13 +162,11 @@ export default function ReportsPage() {
         action={
           <button
             onClick={handleExportPdf}
-            disabled={
-              exporting || loading || !stats || stats.txCount === 0
-            }
+            disabled={exporting || loading || !stats || stats.txCount === 0}
             className={cn(
-              'size-10 rounded-full flex items-center justify-center transition active:scale-95',
+              'size-10 rounded-full flex items-center justify-center transition press-sm',
               'disabled:opacity-40 disabled:pointer-events-none',
-              'hover:bg-brand-soft text-brand'
+              'hover:bg-primary/10 text-primary'
             )}
             aria-label="خروجی PDF"
           >
@@ -180,12 +198,8 @@ export default function ReportsPage() {
               {active && (
                 <motion.span
                   layoutId="reports-tab-active"
-                  className="absolute inset-0 rounded-full bg-brand shadow-brand"
-                  transition={{
-                    type: 'spring',
-                    stiffness: 380,
-                    damping: 30,
-                  }}
+                  className="absolute inset-0 rounded-full bg-primary shadow-brand"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />
               )}
               <span className="relative z-10">{t.label}</span>
@@ -226,18 +240,14 @@ export default function ReportsPage() {
                 byCategory={byCategory}
                 stats={stats}
                 currency={currency}
-                onCategoryClick={(id) =>
-                  navigate(`${ROUTES.CATEGORY}/${id}`)
-                }
+                onCategoryClick={(id) => navigate(`${ROUTES.CATEGORY}/${id}`)}
               />
             )}
             {tab === 'categories' && (
               <CategoriesTab
                 byCategory={byCategory}
                 currency={currency}
-                onCategoryClick={(id) =>
-                  navigate(`${ROUTES.CATEGORY}/${id}`)
-                }
+                onCategoryClick={(id) => navigate(`${ROUTES.CATEGORY}/${id}`)}
               />
             )}
             {tab === 'trend' && (
@@ -262,7 +272,7 @@ function SummaryTab({ byCategory, stats, currency, onCategoryClick }) {
     (r) => CATEGORY_MAP[r.categoryId]?.name || 'سایر'
   )
   const chartColors = rows.map(
-    (r) => CATEGORY_MAP[r.categoryId]?.color || '#9C7A88'
+    (r) => CATEGORY_MAP[r.categoryId]?.color || '#91A6BA'
   )
 
   return (
@@ -277,21 +287,18 @@ function SummaryTab({ byCategory, stats, currency, onCategoryClick }) {
               centerLabel="مجموع مصارف"
               centerValue={toPersianDigits(Math.round(total))}
               height={220}
+              showSliceLabels={true}
+              minPercentForLabel={8}
             />
           </div>
           <div className="w-28 shrink-0 space-y-2">
             {rows.slice(0, 5).map((r) => {
               const cat = CATEGORY_MAP[r.categoryId]
               return (
-                <div
-                  key={r.categoryId}
-                  className="flex items-center gap-2"
-                >
+                <div key={r.categoryId} className="flex items-center gap-2">
                   <div
                     className="size-2.5 rounded-full shrink-0"
-                    style={{
-                      backgroundColor: cat?.color || '#9C7A88',
-                    }}
+                    style={{ backgroundColor: cat?.color || '#91A6BA' }}
                   />
                   <span className="text-[11px] text-fg-secondary truncate flex-1">
                     {cat?.name || 'سایر'}
@@ -310,19 +317,19 @@ function SummaryTab({ byCategory, stats, currency, onCategoryClick }) {
         <StatSmallCard
           label="پس‌انداز"
           value={stats.toSavings - stats.fromSavings}
-          color="#6B4C93"
+          color={SAVING_COLOR}
         />
         <StatSmallCard
           label="درآمد جانبی"
           value={stats.extraIncome}
           prefix="+"
-          color="#16A34A"
+          color={INCOME_COLOR}
         />
         <StatSmallCard
           label="مصارف"
           value={stats.totalExpense}
           prefix="−"
-          color="#B91C4A"
+          color={EXPENSE_COLOR}
         />
       </div>
     </>
@@ -341,7 +348,7 @@ function CategoriesTab({ byCategory, currency, onCategoryClick }) {
     (r) => CATEGORY_MAP[r.categoryId]?.name || 'سایر'
   )
   const chartColors = rows.map(
-    (r) => CATEGORY_MAP[r.categoryId]?.color || '#9C7A88'
+    (r) => CATEGORY_MAP[r.categoryId]?.color || '#91A6BA'
   )
 
   return (
@@ -354,14 +361,14 @@ function CategoriesTab({ byCategory, currency, onCategoryClick }) {
           centerLabel="مجموع مصارف"
           centerValue={toPersianDigits(Math.round(total))}
           height={280}
+          showSliceLabels={true}
+          minPercentForLabel={6}
         />
       </Card>
 
       <Card padded={false} className="px-4 py-2">
         <div className="py-3 border-b border-border">
-          <h3 className="font-semibold text-fg text-sm">
-            جزئیات دسته‌بندی
-          </h3>
+          <h3 className="font-semibold text-fg text-sm">جزئیات دسته‌بندی</h3>
         </div>
         <div className="divide-y divide-border">
           {rows.map((r) => {
@@ -371,11 +378,11 @@ function CategoriesTab({ byCategory, currency, onCategoryClick }) {
               <button
                 key={r.categoryId}
                 onClick={() => onCategoryClick(r.categoryId)}
-                className="w-full flex items-center gap-3 py-3 text-right hover:bg-brand-soft/30 rounded-btn px-2 -mx-2 transition"
+                className="w-full flex items-center gap-3 py-3 text-right hover:bg-primary/5 rounded-btn px-2 -mx-2 transition"
               >
                 <IconCircle
                   icon={Icon}
-                  color={cat?.color || '#9C7A88'}
+                  color={cat?.color || '#91A6BA'}
                   size="md"
                 />
                 <div className="flex-1 min-w-0">
@@ -400,19 +407,35 @@ function CategoriesTab({ byCategory, currency, onCategoryClick }) {
 
 /* ──────────────────────────────
    تب روند
+   - روزانه: BarChart ۷ روز هفته با حرف اول + ستون امروز پررنگ
+   - هفتگی: LineChart ۷ روز با نام کامل روزها
+   - ماهانه/سالانه: LineChart با اعداد
 ────────────────────────────── */
 function TrendTab({ selectedDate, period }) {
   const [txs, setTxs] = useState([])
   const [loading, setLoading] = useState(true)
   const scrollRef = useRef(null)
 
+  const isDaily = period === PERIODS.DAILY
+  const isWeekly = period === PERIODS.WEEKLY
+  const isWeeklyLike = isDaily || isWeekly
   const bucketCount = getBucketCount(period)
 
+  /* داده‌کشی */
   useEffect(() => {
     let cancelled = false
     setLoading(true)
     ;(async () => {
-      const { start, end } = getRange(selectedDate, period)
+      let start, end
+      if (isWeeklyLike) {
+        const { start: ws, end: we } = getWeekRange(selectedDate)
+        start = ws
+        end = we
+      } else {
+        const { start: s, end: e } = getRange(selectedDate, period)
+        start = s
+        end = e
+      }
       const data = await getTransactionsBetween(start, end)
       if (!cancelled) {
         setTxs(data)
@@ -422,9 +445,71 @@ function TrendTab({ selectedDate, period }) {
     return () => {
       cancelled = true
     }
-  }, [selectedDate, period])
+  }, [selectedDate, period, isWeeklyLike])
 
-  const { categories, incomeSeries, expenseSeries, stats } = useMemo(() => {
+  /* ساخت داده */
+  const computed = useMemo(() => {
+    /* ── روزانه یا هفتگی: ۷ روز هفته ── */
+    if (isWeeklyLike) {
+      const { start: weekStart } = getWeekRange(selectedDate)
+      const weekStartMid = new Date(
+        weekStart.getFullYear(),
+        weekStart.getMonth(),
+        weekStart.getDate()
+      ).getTime()
+
+      const income = [0, 0, 0, 0, 0, 0, 0]
+      const expense = [0, 0, 0, 0, 0, 0, 0]
+
+      let totalIncome = 0
+      let totalExtra = 0
+      let totalExpense = 0
+
+      for (const tx of txs) {
+        const d = toDate(tx.date)
+        const dayMid = new Date(
+          d.getFullYear(),
+          d.getMonth(),
+          d.getDate()
+        ).getTime()
+        const diffDays = Math.round(
+          (dayMid - weekStartMid) / (1000 * 60 * 60 * 24)
+        )
+        if (diffDays < 0 || diffDays > 6) continue
+
+        const amt = Number(tx.amount) || 0
+        if (tx.type === 'income') {
+          income[diffDays] += amt
+          totalIncome += amt
+          if (tx.subtype !== 'salary') totalExtra += amt
+        } else if (tx.type === 'expense') {
+          expense[diffDays] += amt
+          totalExpense += amt
+        }
+      }
+
+      /* ایندکس روز انتخاب‌شده در هفته */
+      const selMid = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      ).getTime()
+      const highlightIdx = Math.round(
+        (selMid - weekStartMid) / (1000 * 60 * 60 * 24)
+      )
+
+      return {
+        categoriesFull: WEEKDAY_LABELS,
+        categoriesShort: WEEKDAY_SHORT,
+        income,
+        expense,
+        stats: { totalIncome, totalExtra, totalExpense },
+        highlightIndex:
+          highlightIdx >= 0 && highlightIdx <= 6 ? highlightIdx : null,
+      }
+    }
+
+    /* ── ماهانه / سالانه ── */
     const income = new Array(bucketCount).fill(0)
     const expense = new Array(bucketCount).fill(0)
 
@@ -449,17 +534,20 @@ function TrendTab({ selectedDate, period }) {
     }
 
     return {
-      categories: Array.from({ length: bucketCount }, (_, i) =>
+      categoriesFull: Array.from({ length: bucketCount }, (_, i) =>
         toPersianDigits(i + 1)
       ),
-      incomeSeries: [{ name: 'درآمد', data: income }],
-      expenseSeries: [{ name: 'مصارف', data: expense }],
+      categoriesShort: null,
+      income,
+      expense,
       stats: { totalIncome, totalExtra, totalExpense },
+      highlightIndex: null,
     }
-  }, [txs, period, bucketCount])
+  }, [txs, period, bucketCount, isWeeklyLike, selectedDate])
 
+  /* auto-scroll برای ماهانه */
   useEffect(() => {
-    if (loading || period !== PERIODS.MONTHLY) return
+    if (loading || isWeeklyLike || period !== PERIODS.MONTHLY) return
     const el = scrollRef.current
     if (!el) return
 
@@ -476,7 +564,7 @@ function TrendTab({ selectedDate, period }) {
       el.scrollTo({ left: targetPos, behavior: 'smooth' })
     }, 350)
     return () => clearTimeout(t)
-  }, [loading, txs, selectedDate, period])
+  }, [loading, txs, selectedDate, period, isWeeklyLike])
 
   if (loading) {
     return <Skeleton className="h-64" rounded="rounded-card" />
@@ -494,14 +582,17 @@ function TrendTab({ selectedDate, period }) {
     )
   }
 
-  const chartWidth = Math.max(bucketCount * DAY_WIDTH, 320)
-  const isScrollable = bucketCount > 7
+  const chartWidth = isWeeklyLike
+    ? undefined
+    : Math.max(bucketCount * DAY_WIDTH, 320)
+  const isScrollable = !isWeeklyLike && bucketCount > 7
 
-  const titleText =
-    period === PERIODS.WEEKLY
+  const titleText = isDaily
+    ? 'روند این هفته'
+    : isWeekly
       ? 'روند هفتگی'
-      : period === PERIODS.DAILY
-        ? 'روند روزانه'
+      : period === PERIODS.YEARLY
+        ? 'روند سالانه'
         : 'روند ماهانه'
 
   return (
@@ -510,17 +601,19 @@ function TrendTab({ selectedDate, period }) {
         <div className="px-1.5 pb-2 flex items-center justify-between">
           <span className="text-sm font-semibold text-fg">{titleText}</span>
           <div className="flex items-center gap-3 text-[11px]">
+            {!isDaily && (
+              <div className="flex items-center gap-1">
+                <div
+                  className="size-2 rounded-full"
+                  style={{ backgroundColor: INCOME_COLOR }}
+                />
+                <span className="text-fg-secondary">درآمد</span>
+              </div>
+            )}
             <div className="flex items-center gap-1">
               <div
                 className="size-2 rounded-full"
-                style={{ backgroundColor: '#16A34A' }}
-              />
-              <span className="text-fg-secondary">درآمد</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div
-                className="size-2 rounded-full"
-                style={{ backgroundColor: '#B91C4A' }}
+                style={{ backgroundColor: EXPENSE_COLOR }}
               />
               <span className="text-fg-secondary">مصارف</span>
             </div>
@@ -534,42 +627,71 @@ function TrendTab({ selectedDate, period }) {
           </div>
         )}
 
-        <div
-          ref={scrollRef}
-          className="overflow-x-auto no-scrollbar pb-1"
-          dir="ltr"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          <div style={{ width: `${chartWidth}px`, minWidth: '100%' }}>
-            <LineChart
-              categories={categories}
-              series={[...incomeSeries, ...expenseSeries]}
-              colors={['#16A34A', '#B91C4A']}
-              height={240}
-              width={chartWidth}
-            />
+        {isDaily ? (
+          /* روزانه: BarChart ۷ روز هفته با حرف اول */
+          <BarChart
+            categories={computed.categoriesShort}
+            series={[{ name: 'مصارف', data: computed.expense }]}
+            colors={[EXPENSE_COLOR]}
+            height={260}
+            showDataLabels={true}
+            highlightIndex={computed.highlightIndex}
+            fadeFactor={0.25}
+            compact={true}
+          />
+        ) : isWeekly ? (
+          /* هفتگی: LineChart ۷ روز با نام کامل */
+          <LineChart
+            categories={computed.categoriesFull}
+            series={[
+              { name: 'درآمد', data: computed.income },
+              { name: 'مصارف', data: computed.expense },
+            ]}
+            colors={[INCOME_COLOR, EXPENSE_COLOR]}
+            height={260}
+          />
+        ) : (
+          /* ماهانه/سالانه: LineChart با اعداد */
+          <div
+            ref={scrollRef}
+            className="overflow-x-auto no-scrollbar pb-1"
+            dir="ltr"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            <div style={{ width: `${chartWidth}px`, minWidth: '100%' }}>
+              <LineChart
+                categories={computed.categoriesFull}
+                series={[
+                  { name: 'درآمد', data: computed.income },
+                  { name: 'مصارف', data: computed.expense },
+                ]}
+                colors={[INCOME_COLOR, EXPENSE_COLOR]}
+                height={240}
+                width={chartWidth}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </Card>
 
       <div className="grid grid-cols-3 gap-2">
         <StatSmallCard
           label="مصارف"
-          value={stats.totalExpense}
+          value={computed.stats.totalExpense}
           prefix="−"
-          color="#B91C4A"
+          color={EXPENSE_COLOR}
         />
         <StatSmallCard
           label="درآمد جانبی"
-          value={stats.totalExtra}
+          value={computed.stats.totalExtra}
           prefix="+"
-          color="#16A34A"
+          color={INCOME_COLOR}
         />
         <StatSmallCard
           label="کل درآمد"
-          value={stats.totalIncome}
+          value={computed.stats.totalIncome}
           prefix="+"
-          color="#6B4C93"
+          color={SAVING_COLOR}
         />
       </div>
     </>

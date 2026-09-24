@@ -106,7 +106,7 @@ export default function SavingsPage() {
               className={cn(
                 'size-10 rounded-full flex items-center justify-center transition press-sm',
                 'disabled:opacity-40 disabled:pointer-events-none',
-                'hover:bg-brand-soft text-brand'
+                'hover:bg-primary/10 text-primary'
               )}
               aria-label="خروجی PDF"
             >
@@ -114,7 +114,7 @@ export default function SavingsPage() {
             </button>
             <button
               onClick={() => navigate(ROUTES.SETTINGS)}
-              className="size-10 rounded-full hover:bg-brand-soft flex items-center justify-center text-fg transition press-sm"
+              className="size-10 rounded-full hover:bg-primary/10 flex items-center justify-center text-text transition press-sm"
               aria-label="تنظیمات"
             >
               <SettingsIcon size={18} />
@@ -123,43 +123,34 @@ export default function SavingsPage() {
         }
       />
 
-      {/* کارت اصلی پس‌انداز — سایه‌ی خیلی خفیف + عمق ظریف */}
       {loading ? (
-        <Skeleton className="h-44" rounded="rounded-[28px]" />
+        <Skeleton className="h-44" rounded="rounded-card-lg" />
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="rounded-[28px] p-5 text-white relative overflow-hidden"
+          className="rounded-card-lg p-5 text-white relative overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, #6B4C93 0%, #8E24AA 100%)',
-            boxShadow:
-              'inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 1px 3px rgba(107, 76, 147, 0.08), 0 4px 12px rgba(107, 76, 147, 0.06)',
+            background: 'var(--gradient-savings)',
+            boxShadow: 'var(--savings-hero-shadow)',
           }}
         >
-          {/* نور بالای کارت — بازتاب */}
           <div
             className="absolute -top-24 left-1/2 -translate-x-1/2 w-[140%] h-48 rounded-full pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse at center top, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 45%, transparent 70%)',
+                'radial-gradient(ellipse at center top, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.03) 45%, transparent 70%)',
               zIndex: 0,
             }}
           />
 
-          {/* لکه‌ی تزئینی */}
-          <div
-            className="absolute -bottom-24 -right-12 size-56 rounded-full bg-white/5 blur-3xl pointer-events-none"
-            style={{ zIndex: 0 }}
-          />
-
           <div className="relative" style={{ zIndex: 1 }}>
             <div className="flex items-start justify-between">
-              <div className="text-sm text-white/85">موجودی پس‌انداز</div>
+              <div className="text-sm text-white/80">موجودی پس‌انداز</div>
               <button
                 onClick={togglePrivacy}
-                className="size-9 rounded-full bg-white/15 backdrop-blur border border-white/20 flex items-center justify-center transition press-sm hover:bg-white/20"
+                className="size-9 rounded-full bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center transition press-sm hover:bg-white/20"
                 aria-label="حریم خصوصی"
               >
                 <Sparkles size={16} />
@@ -173,31 +164,30 @@ export default function SavingsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
                 className="text-[44px] leading-none font-bold tracking-tight tabular-nums"
-                style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
+                style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.10)' }}
               >
                 {money(balance.savings)}
               </motion.div>
-              <span className="text-sm text-white/85">{currency}</span>
+              <span className="text-sm text-white/70">{currency}</span>
             </div>
 
-            <div className="mt-4 text-xs text-white/80">
+            <div className="mt-4 text-xs text-white/60">
               از ابتدا {toPersianDigits(depositCount)} بار پس‌انداز
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* دکمه‌های واریز/برداشت */}
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={() =>
             openSheet('transfer', { direction: 'to-savings' })
           }
-          className="h-12 rounded-btn text-white font-medium flex items-center justify-center gap-2 transition press"
+          className="h-12 rounded-btn text-white font-medium flex items-center justify-center gap-2 transition press-sm"
           style={{
-            backgroundColor: '#6B4C93',
+            background: 'var(--saving)',
             boxShadow:
-              'inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 2px 6px rgba(107, 76, 147, 0.20), 0 8px 16px rgba(107, 76, 147, 0.12)',
+              '0 2px 6px rgba(116, 87, 217, 0.25), 0 8px 16px rgba(116, 87, 217, 0.15)',
           }}
         >
           <ArrowDown size={18} strokeWidth={2.4} />
@@ -207,34 +197,30 @@ export default function SavingsPage() {
           onClick={() =>
             openSheet('transfer', { direction: 'from-savings' })
           }
-          className="h-12 rounded-btn bg-card border-2 text-info font-medium flex items-center justify-center gap-2 transition press hover:bg-info-soft/30"
-          style={{
-            borderColor: '#6B4C93',
-            boxShadow: '0 1px 3px rgba(107, 76, 147, 0.06)',
-          }}
+          className="h-12 rounded-btn font-medium flex items-center justify-center gap-2 transition press-sm neu-raised-sm"
+          style={{ color: 'var(--saving)' }}
         >
           <ArrowUp size={18} strokeWidth={2.4} />
           <span className="text-[13.5px]">برداشت از پس‌انداز</span>
         </button>
       </div>
 
-      {/* خلاصه‌ی آماری */}
       {!loading && history.length > 0 && (
         <div className="grid grid-cols-2 gap-3">
           <Card padded className="!p-3.5">
-            <div className="text-[11px] text-fg-muted">مجموع واریز</div>
+            <div className="text-[11px] text-text-muted">مجموع واریز</div>
             <div
               className="mt-1 font-semibold text-[15px] tabular-nums"
-              style={{ color: '#16A34A' }}
+              style={{ color: 'var(--income)' }}
             >
               +{money(totalIn)}
             </div>
           </Card>
           <Card padded className="!p-3.5">
-            <div className="text-[11px] text-fg-muted">مجموع برداشت</div>
+            <div className="text-[11px] text-text-muted">مجموع برداشت</div>
             <div
               className="mt-1 font-semibold text-[15px] tabular-nums"
-              style={{ color: '#D81B60' }}
+              style={{ color: 'var(--expense)' }}
             >
               −{money(totalOut)}
             </div>
@@ -242,9 +228,8 @@ export default function SavingsPage() {
         </div>
       )}
 
-      {/* تاریخچه */}
       <section>
-        <h2 className="font-semibold text-fg mb-2 px-1">
+        <h2 className="font-semibold text-text mb-2 px-1">
           تاریخچه‌ی انتقال‌ها
         </h2>
 

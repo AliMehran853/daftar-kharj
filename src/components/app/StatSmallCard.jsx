@@ -4,7 +4,7 @@ import { useUIStore } from '@/store/useUIStore'
 export default function StatSmallCard({
   label,
   value,
-  color = '#D81B60',
+  color = 'var(--primary)',
   prefix = '',
   unit = 'افغانی',
   className,
@@ -14,13 +14,9 @@ export default function StatSmallCard({
 
   return (
     <div
-      className={cn('rounded-card p-3.5 border depth-card', className)}
-      style={{
-        background: `linear-gradient(135deg, ${color}12 0%, ${color}06 100%)`,
-        borderColor: `${color}25`,
-      }}
+      className={cn('rounded-card p-3.5 neu-raised-sm', className)}
     >
-      <div className="text-[11px] text-fg-muted mb-1">{label}</div>
+      <div className="text-[11px] text-text-muted mb-1">{label}</div>
       <div
         className="text-[16px] font-bold leading-tight tabular-nums"
         style={{ color }}
@@ -28,7 +24,7 @@ export default function StatSmallCard({
         {prefix}
         {displayValue}
       </div>
-      <div className="text-[10px] text-fg-muted mt-0.5">{unit}</div>
+      <div className="text-[10px] text-text-muted mt-0.5">{unit}</div>
     </div>
   )
 }

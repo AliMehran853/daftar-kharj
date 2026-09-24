@@ -1,15 +1,21 @@
 import Chart from 'react-apexcharts'
 import { useMemo } from 'react'
+import { toPersianDigits } from '@/lib/utils'
 import { useUIStore } from '@/store/useUIStore'
-import { getBaseOptions, persianTickFormatter } from './chartTheme'
+import {
+  getBaseOptions,
+  persianTickFormatter,
+  getChartFontFamily,
+} from './chartTheme'
 
 export default function LineChart({
   categories = [],
   series = [],
-  colors = ['#00B894', '#E74C3C'],
+  colors = ['#16A56A', '#F04478'],
   height = 260,
   width = '100%',
   areaFill = true,
+  showDataLabels = false,
 }) {
   const theme = useUIStore((s) => s.theme)
   const isDark =
@@ -44,6 +50,22 @@ export default function LineChart({
         size: 0,
         strokeWidth: 0,
         hover: { size: 5 },
+      },
+      dataLabels: {
+        enabled: showDataLabels,
+        formatter: (val) => {
+          if (!val || Number(val) === 0) return ''
+          return toPersianDigits(Math.round(Number(val)))
+        },
+        style: {
+          fontSize: '9px',
+          fontFamily: getChartFontFamily(),
+          fontWeight: 600,
+          colors: colors,
+        },
+        background: { enabled: false },
+        offsetY: -6,
+        dropShadow: { enabled: false },
       },
       xaxis: {
         categories,
@@ -85,7 +107,7 @@ export default function LineChart({
         },
       },
     }
-  }, [categories, series, colors, isDark, areaFill])
+  }, [categories, series, colors, isDark, areaFill, showDataLabels])
 
   if (!series.length || !categories.length) {
     return (

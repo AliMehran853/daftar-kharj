@@ -12,10 +12,10 @@ const ICONS = {
 }
 
 const COLORS = {
-  success: 'bg-brand text-white',
-  error: 'bg-danger text-white',
-  info: 'bg-info text-white',
-  warning: 'bg-amber-500 text-white',
+  success: 'var(--income)',
+  error: 'var(--expense)',
+  info: 'var(--info)',
+  warning: 'var(--warning)',
 }
 
 export default function Toast() {
@@ -42,9 +42,12 @@ export default function Toast() {
           <div
             className={cn(
               'pointer-events-auto',
-              'flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-float',
-              COLORS[toast.type] || COLORS.info
+              'flex items-center gap-2.5 px-4 py-3 rounded-btn',
+              'text-white shadow-raised'
             )}
+            style={{
+              background: COLORS[toast.type] || COLORS.info,
+            }}
           >
             {(() => {
               const Icon = ICONS[toast.type] || Info
