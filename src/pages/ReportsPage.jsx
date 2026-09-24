@@ -19,13 +19,13 @@ import {
   formatMonthYear,
   getWeekRange,
 } from '@/lib/jalali'
-import { getTransactionsBetween } from '@/db/queries'
+import { getTransactionsBetween, getBalance } from '@/db/queries'
 import { CATEGORY_MAP } from '@/data/categories'
 import { ROUTES, PERIODS } from '@/data/constants'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useReports } from '@/hooks/useReports'
-import { buildPeriodReportHtml, printHtml } from '@/lib/pdf'
+import { buildPeriodReportHtml, downloadPdf } from '@/lib/pdf'
 
 import PageHeader from '@/components/layout/PageHeader'
 import PeriodPicker from '@/components/app/PeriodPicker'
@@ -53,7 +53,6 @@ const INCOME_COLOR = '#16A56A'
 const EXPENSE_COLOR = '#F04478'
 const SAVING_COLOR = '#7457D9'
 
-/* نام کامل روزهای هفته */
 const WEEKDAY_LABELS = [
   'شنبه',
   'یک‌شنبه',
@@ -64,7 +63,6 @@ const WEEKDAY_LABELS = [
   'جمعه',
 ]
 
-/* حرف اول روزها — برای فضای کم */
 const WEEKDAY_SHORT = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج']
 
 function getRange(date, period) {
@@ -117,13 +115,31 @@ export default function ReportsPage() {
   const navigate = useNavigate()
   const currency = useSettingsStore((s) => s.currencyLabel)
   const showToast = useUIStore((s) => s.showToast)
+  const refreshKey = useUIStore((s) => s.refreshKey)
 
   const [tab, setTab] = useState('summary')
   const [period, setPeriod] = useState(PERIODS.MONTHLY)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [exporting, setExporting] = useState(false)
+  const [walletBalance, setWalletBalance] = useState(0)
+  const [savingsBalance, setSavingsBalance] = useState(0)
 
   const { stats, byCategory, loading } = useReports(selectedDate, period)
+
+  /* لود موجودی خزانه و پس‌انداز */
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const b = await getBalance()
+      if (!cancelled) {
+        setWalletBalance(b.wallet)
+        setSavingsBalance(b.savings)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [selectedDate, period, refreshKey])
 
   const handlePeriodChange = (newPeriod) => {
     setPeriod(newPeriod)
@@ -137,20 +153,32 @@ export default function ReportsPage() {
     }
     setExporting(true)
     try {
-      const html = buildPeriodReportHtml({
+      const periodSlug =
+        {
+          [PERIODS.DAILY]: 'daily',
+          [PERIODS.WEEKLY]: 'weekly',
+          [PERIODS.MONTHLY]: 'monthly',
+          [PERIODS.YEARLY]: 'yearly',
+        }[period] || 'report'
+
+      const report = buildPeriodReportHtml({
         txs: stats.transactions || [],
         stats,
         periodLabel: getPeriodLabel(selectedDate, period),
         periodTitle: getPeriodTitle(period),
         savingsDelta: (stats.toSavings || 0) - (stats.fromSavings || 0),
+        currentWallet: walletBalance,
+        currentSavings: savingsBalance,
+        filename: `daftar-kharj-${periodSlug}`,
       })
-      printHtml(html)
-      showToast('پنجره‌ی چاپ باز شد', 'success')
+
+      await downloadPdf(report)
+      showToast('PDF دانلود شد', 'success')
     } catch (e) {
       console.error(e)
-      showToast('خطا در ساخت گزارش', 'error')
+      showToast('خطا در ساخت PDF', 'error')
     } finally {
-      setTimeout(() => setExporting(false), 1200)
+      setTimeout(() => setExporting(false), 800)
     }
   }
 
@@ -170,7 +198,11 @@ export default function ReportsPage() {
             )}
             aria-label="خروجی PDF"
           >
-            <FileText size={18} />
+            {exporting ? (
+              <div className="size-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+            ) : (
+              <FileText size={18} />
+            )}
           </button>
         }
       />
@@ -287,8 +319,6 @@ function SummaryTab({ byCategory, stats, currency, onCategoryClick }) {
               centerLabel="مجموع مصارف"
               centerValue={toPersianDigits(Math.round(total))}
               height={220}
-              showSliceLabels={true}
-              minPercentForLabel={8}
             />
           </div>
           <div className="w-28 shrink-0 space-y-2">
@@ -354,16 +384,49 @@ function CategoriesTab({ byCategory, currency, onCategoryClick }) {
   return (
     <>
       <Card padded={false} className="p-4">
-        <DonutChart
-          data={chartData}
-          labels={chartLabels}
-          colors={chartColors}
-          centerLabel="مجموع مصارف"
-          centerValue={toPersianDigits(Math.round(total))}
-          height={280}
-          showSliceLabels={true}
-          minPercentForLabel={6}
-        />
+        <div className="flex items-center gap-3">
+          <div className="flex-1 min-w-0">
+            <DonutChart
+              data={chartData}
+              labels={chartLabels}
+              colors={chartColors}
+              centerLabel="مجموع مصارف"
+              centerValue={toPersianDigits(Math.round(total))}
+              height={220}
+            />
+          </div>
+          <div className="w-[150px] shrink-0 grid grid-cols-1 gap-1.5 max-h-[240px] overflow-y-auto no-scrollbar">
+            {rows.map((r) => {
+              const cat = CATEGORY_MAP[r.categoryId]
+              return (
+                <div
+                  key={r.categoryId}
+                  className="flex items-center gap-2 py-1"
+                >
+                  <div
+                    className="size-2.5 rounded-full shrink-0"
+                    style={{
+                      backgroundColor: cat?.color || '#91A6BA',
+                    }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-[11px] text-fg-secondary truncate">
+                        {cat?.name || 'سایر'}
+                      </span>
+                      <span className="text-[10px] font-semibold text-fg shrink-0">
+                        {toPersianDigits(Math.round(r.percent))}٪
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-fg-muted tabular-nums mt-0.5">
+                      {formatMoney(r.amount)} {currency}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       </Card>
 
       <Card padded={false} className="px-4 py-2">
@@ -407,9 +470,6 @@ function CategoriesTab({ byCategory, currency, onCategoryClick }) {
 
 /* ──────────────────────────────
    تب روند
-   - روزانه: BarChart ۷ روز هفته با حرف اول + ستون امروز پررنگ
-   - هفتگی: LineChart ۷ روز با نام کامل روزها
-   - ماهانه/سالانه: LineChart با اعداد
 ────────────────────────────── */
 function TrendTab({ selectedDate, period }) {
   const [txs, setTxs] = useState([])
@@ -421,7 +481,6 @@ function TrendTab({ selectedDate, period }) {
   const isWeeklyLike = isDaily || isWeekly
   const bucketCount = getBucketCount(period)
 
-  /* داده‌کشی */
   useEffect(() => {
     let cancelled = false
     setLoading(true)
@@ -447,9 +506,7 @@ function TrendTab({ selectedDate, period }) {
     }
   }, [selectedDate, period, isWeeklyLike])
 
-  /* ساخت داده */
   const computed = useMemo(() => {
-    /* ── روزانه یا هفتگی: ۷ روز هفته ── */
     if (isWeeklyLike) {
       const { start: weekStart } = getWeekRange(selectedDate)
       const weekStartMid = new Date(
@@ -488,7 +545,6 @@ function TrendTab({ selectedDate, period }) {
         }
       }
 
-      /* ایندکس روز انتخاب‌شده در هفته */
       const selMid = new Date(
         selectedDate.getFullYear(),
         selectedDate.getMonth(),
@@ -509,7 +565,6 @@ function TrendTab({ selectedDate, period }) {
       }
     }
 
-    /* ── ماهانه / سالانه ── */
     const income = new Array(bucketCount).fill(0)
     const expense = new Array(bucketCount).fill(0)
 
@@ -545,7 +600,6 @@ function TrendTab({ selectedDate, period }) {
     }
   }, [txs, period, bucketCount, isWeeklyLike, selectedDate])
 
-  /* auto-scroll برای ماهانه */
   useEffect(() => {
     if (loading || isWeeklyLike || period !== PERIODS.MONTHLY) return
     const el = scrollRef.current
@@ -628,7 +682,6 @@ function TrendTab({ selectedDate, period }) {
         )}
 
         {isDaily ? (
-          /* روزانه: BarChart ۷ روز هفته با حرف اول */
           <BarChart
             categories={computed.categoriesShort}
             series={[{ name: 'مصارف', data: computed.expense }]}
@@ -640,7 +693,6 @@ function TrendTab({ selectedDate, period }) {
             compact={true}
           />
         ) : isWeekly ? (
-          /* هفتگی: LineChart ۷ روز با نام کامل */
           <LineChart
             categories={computed.categoriesFull}
             series={[
@@ -651,7 +703,6 @@ function TrendTab({ selectedDate, period }) {
             height={260}
           />
         ) : (
-          /* ماهانه/سالانه: LineChart با اعداد */
           <div
             ref={scrollRef}
             className="overflow-x-auto no-scrollbar pb-1"

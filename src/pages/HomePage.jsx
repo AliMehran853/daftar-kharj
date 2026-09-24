@@ -54,7 +54,11 @@ export default function HomePage() {
       {loading ? (
         <Skeleton className="h-64" rounded="rounded-card-lg" />
       ) : (
-        <BalanceHero balance={wallet} stats={monthStats} />
+        <BalanceHero
+          balance={wallet}
+          savings={savings}
+          stats={monthStats}
+        />
       )}
 
       <div className="grid grid-cols-2 gap-3">
@@ -190,7 +194,6 @@ export default function HomePage() {
           <Card padded={false} className="px-4">
             <TransactionList transactions={transactions} />
 
-            {/* دکمه‌ی نمایش کمتر در پایین (اگه بازه) */}
             {showAll && hasMore && (
               <button
                 onClick={() => setShowAll(false)}

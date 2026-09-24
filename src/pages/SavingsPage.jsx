@@ -7,6 +7,8 @@ import {
   PiggyBank,
   Sparkles,
   FileText,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { formatMoney, toPersianDigits, cn } from '@/lib/utils'
@@ -14,13 +16,16 @@ import { getBalance, getTransferHistory } from '@/db/queries'
 import { TX_SUBTYPES, ROUTES } from '@/data/constants'
 import { useUIStore } from '@/store/useUIStore'
 import { useSettingsStore } from '@/store/useSettingsStore'
-import { buildSavingsReportHtml, printHtml } from '@/lib/pdf'
+import { buildSavingsReportHtml, downloadPdf } from '@/lib/pdf'
 
 import PageHeader from '@/components/layout/PageHeader'
 import TransferHistoryItem from '@/components/app/TransferHistoryItem'
 import Card from '@/components/ui/Card'
 import Skeleton from '@/components/ui/Skeleton'
 import EmptyState from '@/components/ui/EmptyState'
+
+const INITIAL_LIMIT = 5
+const MAX_LIMIT = 100
 
 export default function SavingsPage() {
   const navigate = useNavigate()
@@ -35,18 +40,19 @@ export default function SavingsPage() {
   const [balance, setBalance] = useState({ wallet: 0, savings: 0 })
   const [history, setHistory] = useState([])
   const [exporting, setExporting] = useState(false)
+  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     setLoading(true)
     ;(async () => {
-      const [b, txs] = await Promise.all([
+      const [b, allTxs] = await Promise.all([
         getBalance(),
         getTransferHistory(),
       ])
       if (cancelled) return
       setBalance(b)
-      setHistory(txs)
+      setHistory(allTxs)
       setLoading(false)
     })()
     return () => {
@@ -70,6 +76,17 @@ export default function SavingsPage() {
     return { depositCount: count, totalIn: inSum, totalOut: outSum }
   }, [history])
 
+  const visibleHistory = useMemo(
+    () =>
+      showAll
+        ? history.slice(0, MAX_LIMIT)
+        : history.slice(0, INITIAL_LIMIT),
+    [history, showAll]
+  )
+
+  const hasMore = history.length > INITIAL_LIMIT
+  const totalCount = history.length
+
   const money = (n) => (privacyMode ? '••••' : formatMoney(n))
 
   const handleExportPdf = async () => {
@@ -79,18 +96,20 @@ export default function SavingsPage() {
     }
     setExporting(true)
     try {
-      const html = buildSavingsReportHtml({
+      const report = buildSavingsReportHtml({
         transfers: history,
         totalIn,
         totalOut,
+        currentSavings: balance.savings,
+        filename: 'daftar-kharj-savings',
       })
-      printHtml(html)
-      showToast('پنجره‌ی چاپ باز شد', 'success')
+      await downloadPdf(report)
+      showToast('PDF دانلود شد', 'success')
     } catch (e) {
       console.error(e)
-      showToast('خطا در ساخت گزارش', 'error')
+      showToast('خطا در ساخت PDF', 'error')
     } finally {
-      setTimeout(() => setExporting(false), 1200)
+      setTimeout(() => setExporting(false), 800)
     }
   }
 
@@ -110,7 +129,11 @@ export default function SavingsPage() {
               )}
               aria-label="خروجی PDF"
             >
-              <FileText size={18} />
+              {exporting ? (
+                <div className="size-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+              ) : (
+                <FileText size={18} />
+              )}
             </button>
             <button
               onClick={() => navigate(ROUTES.SETTINGS)}
@@ -123,6 +146,7 @@ export default function SavingsPage() {
         }
       />
 
+      {/* کارت اصلی پس‌انداز */}
       {loading ? (
         <Skeleton className="h-44" rounded="rounded-card-lg" />
       ) : (
@@ -178,6 +202,7 @@ export default function SavingsPage() {
         </motion.div>
       )}
 
+      {/* دکمه‌های واریز/برداشت */}
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={() =>
@@ -205,6 +230,7 @@ export default function SavingsPage() {
         </button>
       </div>
 
+      {/* خلاصه‌ی آماری */}
       {!loading && history.length > 0 && (
         <div className="grid grid-cols-2 gap-3">
           <Card padded className="!p-3.5">
@@ -228,13 +254,34 @@ export default function SavingsPage() {
         </div>
       )}
 
+      {/* تاریخچه */}
       <section>
-        <h2 className="font-semibold text-text mb-2 px-1">
-          تاریخچه‌ی انتقال‌ها
-        </h2>
+        <div className="flex items-center justify-between mb-2 px-1">
+          <h2 className="font-semibold text-text">تاریخچه‌ی انتقال‌ها</h2>
+
+          {hasMore && !loading && (
+            <button
+              onClick={() => setShowAll((v) => !v)}
+              className="text-sm text-primary font-medium flex items-center gap-1 transition press-sm"
+            >
+              {showAll ? (
+                <>
+                  <span>نمایش کمتر</span>
+                  <ChevronUp size={14} />
+                </>
+              ) : (
+                <>
+                  <span>نمایش همه ({toPersianDigits(totalCount)})</span>
+                  <ChevronDown size={14} />
+                </>
+              )}
+            </button>
+          )}
+        </div>
 
         {loading ? (
           <div className="space-y-3">
+            <Skeleton className="h-14" />
             <Skeleton className="h-14" />
             <Skeleton className="h-14" />
           </div>
@@ -249,10 +296,21 @@ export default function SavingsPage() {
         ) : (
           <Card padded={false} className="px-4">
             <div className="divide-y divide-border">
-              {history.map((tx) => (
+              {visibleHistory.map((tx) => (
                 <TransferHistoryItem key={tx.id} tx={tx} />
               ))}
             </div>
+
+            {/* دکمه‌ی بستن لیست */}
+            {showAll && hasMore && (
+              <button
+                onClick={() => setShowAll(false)}
+                className="w-full h-11 mt-1 border-t border-border text-primary text-[13px] font-medium flex items-center justify-center gap-1.5 transition press-sm"
+              >
+                <ChevronUp size={14} />
+                <span>بستن لیست</span>
+              </button>
+            )}
           </Card>
         )}
       </section>

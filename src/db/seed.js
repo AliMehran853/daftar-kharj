@@ -1,5 +1,8 @@
 import { db } from './schema'
-import { DEFAULT_CATEGORIES } from '../data/categories'
+import {
+  DEFAULT_CATEGORIES,
+  normalizeCategoryId,
+} from '../data/categories'
 
 const DEFAULT_SETTINGS = {
   userName: '',
@@ -27,15 +30,45 @@ const DEFAULT_SETTINGS = {
 }
 
 export async function seedDatabase() {
-  // دسته‌ها
-  const catCount = await db.categories.count()
-  if (catCount === 0) {
-    await db.categories.bulkPut(
-      DEFAULT_CATEGORIES.map((c) => ({ ...c }))
-    )
+  /* ─── دسته‌ها ─── */
+  const existingCats = await db.categories.toArray()
+  const existingIds = new Set(existingCats.map((c) => c.id))
+  const newIds = new Set(DEFAULT_CATEGORIES.map((c) => c.id))
+
+  // ۱. اضافه‌کردن دسته‌های جدیدی که نیستن
+  const toAdd = DEFAULT_CATEGORIES.filter((c) => !existingIds.has(c.id))
+  if (toAdd.length > 0) {
+    await db.categories.bulkPut(toAdd.map((c) => ({ ...c })))
   }
 
-  // تنظیمات
+  // ۲. حذف دسته‌های پیش‌فرض قدیمی که دیگه توی لیست جدید نیستن
+  const toRemove = existingCats.filter(
+    (c) => c.isDefault && !newIds.has(c.id)
+  )
+  if (toRemove.length > 0) {
+    await db.categories.bulkDelete(toRemove.map((c) => c.id))
+  }
+
+  // ۳. Migration: تبدیل categoryId قدیمی به جدید
+  try {
+    const allTxs = await db.transactions.toArray()
+    const toUpdate = []
+    for (const tx of allTxs) {
+      if (!tx.categoryId) continue
+      const newId = normalizeCategoryId(tx.categoryId)
+      if (newId !== tx.categoryId) {
+        toUpdate.push({ ...tx, categoryId: newId })
+      }
+    }
+    if (toUpdate.length > 0) {
+      await db.transactions.bulkPut(toUpdate)
+      console.log(`[seed] migrated ${toUpdate.length} transactions`)
+    }
+  } catch (e) {
+    console.warn('[seed] migration skipped:', e)
+  }
+
+  /* ─── تنظیمات ─── */
   const now = Date.now()
   for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
     const existing = await db.settings.get(key)

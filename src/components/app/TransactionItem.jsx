@@ -57,19 +57,31 @@ export default function TransactionItem({ tx, onClick }) {
   const timeLabel = formatTime(new Date(tx.createdAt))
   const fullDate = formatJalaliLong(tx.date)
 
-  const hasDetails =
-    !!tx.note ||
-    tx.type === 'transfer' ||
-    (tx.subtype && tx.subtype !== 'extra' && tx.subtype !== 'salary')
+  const hasNote = !!tx.note
+
+  /* رنگ «نوع تراکنش» */
+  const typeColor = isIncome
+    ? 'var(--income)'
+    : isTransfer
+      ? 'var(--info)'
+      : 'var(--expense)'
+
+  const typeLabel = isIncome
+    ? tx.subtype === 'salary'
+      ? 'معاش'
+      : 'درآمد'
+    : isTransfer
+      ? tx.subtype === 'to-savings'
+        ? 'واریز به پس‌انداز'
+        : 'برداشت از پس‌انداز'
+      : 'مصرف'
 
   const handleToggle = () => {
     if (onClick) {
       onClick(tx)
       return
     }
-    if (hasDetails) {
-      setExpanded((v) => !v)
-    }
+    setExpanded((v) => !v)
   }
 
   const handleOpenMenu = (e) => {
@@ -111,17 +123,15 @@ export default function TransactionItem({ tx, onClick }) {
   return (
     <>
       <div className="w-full">
-        {/* ردیف اصلی + دکمه سه‌نقطه */}
+        {/* ردیف اصلی */}
         <div className="relative flex items-center">
-          {/* ردیف اصلی — قابل کلیک برای expand */}
           <button
             type="button"
             onClick={handleToggle}
             className={cn(
               'flex-1 min-w-0 flex items-center gap-3 py-3 text-right',
               'transition-colors rounded-btn',
-              hasDetails &&
-                'hover:bg-primary/5 active:bg-primary/10 cursor-pointer'
+              'hover:bg-primary/5 active:bg-primary/10 cursor-pointer'
             )}
           >
             <IconCircle icon={Icon} color={cat.color} size="lg" />
@@ -165,19 +175,22 @@ export default function TransactionItem({ tx, onClick }) {
                   >
                     {dayLabel}
                   </span>
-                  {hasDetails && (
+                  <motion.span
+                    animate={{ rotate: expanded ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex"
+                  >
                     <ChevronDown
                       size={12}
                       className="text-text-muted/70"
                       strokeWidth={2.5}
                     />
-                  )}
+                  </motion.span>
                 </div>
               )}
             </div>
           </button>
 
-          {/* دکمه‌ی سه‌نقطه */}
           <button
             type="button"
             onClick={handleOpenMenu}
@@ -194,9 +207,9 @@ export default function TransactionItem({ tx, onClick }) {
           </button>
         </div>
 
-        {/* بخش جزئیات expandable */}
+        {/* جزئیات */}
         <AnimatePresence initial={false}>
-          {expanded && hasDetails && (
+          {expanded && (
             <motion.div
               key="details"
               initial={{ height: 0, opacity: 0 }}
@@ -206,7 +219,7 @@ export default function TransactionItem({ tx, onClick }) {
               style={{ overflow: 'hidden' }}
             >
               <div className="pr-[60px] pb-3 space-y-2">
-                {tx.note && (
+                {hasNote && (
                   <div className="bg-surface-deep rounded-btn p-3">
                     <div className="text-[10px] text-text-muted mb-1">
                       توضیحات
@@ -225,9 +238,31 @@ export default function TransactionItem({ tx, onClick }) {
                 )}
 
                 <div className="flex items-center justify-between text-[11px] text-text-muted px-1">
-                  <span>{fullDate}</span>
-                  <span>{timeLabel}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-text-muted/60">📅</span>
+                    <span>{fullDate}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-text-muted/60">🕐</span>
+                    <span>{timeLabel}</span>
+                  </div>
                 </div>
+
+                {/* نوع تراکنش — با رنگ معنایی */}
+                {tx.type && (
+                  <div className="flex items-center justify-between text-[11px] px-1">
+                    <span className="text-text-muted/60">نوع:</span>
+                    <span
+                      className="font-semibold"
+                      style={{
+                        color: typeColor,
+                        textShadow: `0 0 8px color-mix(in srgb, ${typeColor} 30%, transparent)`,
+                      }}
+                    >
+                      {typeLabel}
+                    </span>
+                  </div>
+                )}
 
                 <button
                   type="button"
@@ -256,7 +291,7 @@ export default function TransactionItem({ tx, onClick }) {
         </AnimatePresence>
       </div>
 
-      {/* ─── Action Sheet (منوی سه‌نقطه) ─── */}
+      {/* ─── Action Sheet ─── */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -268,13 +303,11 @@ export default function TransactionItem({ tx, onClick }) {
             data-vaul-no-drag=""
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Backdrop */}
             <div
               className="absolute inset-0 backdrop-blur-md bg-black/40"
               onClick={() => setMenuOpen(false)}
             />
 
-            {/* کارت منو */}
             <motion.div
               initial={{ opacity: 0, y: 40, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -287,7 +320,6 @@ export default function TransactionItem({ tx, onClick }) {
                 'p-4'
               )}
             >
-              {/* هدر خلاصه */}
               <div className="flex items-center gap-3 pb-3 mb-3 border-b border-border">
                 <IconCircle icon={Icon} color={cat.color} size="md" />
                 <div className="flex-1 min-w-0">
@@ -313,7 +345,6 @@ export default function TransactionItem({ tx, onClick }) {
                 </button>
               </div>
 
-              {/* گزینه‌ها */}
               <div className="space-y-2">
                 <button
                   type="button"
