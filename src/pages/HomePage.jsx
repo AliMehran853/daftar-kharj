@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Banknote,
@@ -6,6 +7,8 @@ import {
   ArrowLeft,
   Minus,
   Plus,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import { toPersianDigits, formatMoney } from '@/lib/utils'
 import { ROUTES } from '@/data/constants'
@@ -23,13 +26,26 @@ import Skeleton from '@/components/ui/Skeleton'
 import EmptyState from '@/components/ui/EmptyState'
 import Button from '@/components/ui/Button'
 
+const INITIAL_LIMIT = 6
+const MAX_LIMIT = 30
+
 export default function HomePage() {
   const navigate = useNavigate()
   const currency = useSettingsStore((s) => s.currencyLabel)
   const openSheet = useUIStore((s) => s.openSheet)
 
   const { wallet, savings, monthStats, loading } = useBalance()
-  const { transactions, loading: txLoading } = useRecentTransactions(6)
+  const { transactions: allTxs, loading: txLoading } =
+    useRecentTransactions(MAX_LIMIT)
+
+  const [showAll, setShowAll] = useState(false)
+
+  const transactions = showAll
+    ? allTxs
+    : allTxs.slice(0, INITIAL_LIMIT)
+
+  const hasMore = allTxs.length > INITIAL_LIMIT
+  const totalCount = allTxs.length
 
   return (
     <div className="px-4 lg:px-6 pt-4 pb-4 space-y-5">
@@ -68,7 +84,6 @@ export default function HomePage() {
           style={{
             background: 'var(--surface)',
             boxShadow: 'var(--shadow-raised-sm)',
-            border: '1px solid var(--border)',
             color: 'var(--expense)',
           }}
         >
@@ -90,7 +105,6 @@ export default function HomePage() {
           style={{
             background: 'var(--surface)',
             boxShadow: 'var(--shadow-raised-sm)',
-            border: '1px solid var(--border)',
             color: 'var(--income)',
           }}
         >
@@ -103,7 +117,7 @@ export default function HomePage() {
           >
             <Plus size={18} strokeWidth={2.6} />
           </div>
-          <span className="text-[14px]">درآمد جانبی</span>
+          <span className="text-[14px]">ثبت درآمد</span>
         </button>
       </div>
 
@@ -124,15 +138,29 @@ export default function HomePage() {
         <ArrowLeft size={18} className="text-text-muted" />
       </Card>
 
+      {/* آخرین تراکنش‌ها */}
       <section>
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-text">آخرین تراکنش‌ها</h2>
-          <button
-            onClick={() => navigate(ROUTES.EXPENSES)}
-            className="text-sm text-primary font-medium"
-          >
-            نمایش همه
-          </button>
+
+          {hasMore && !txLoading && (
+            <button
+              onClick={() => setShowAll((v) => !v)}
+              className="text-sm text-primary font-medium flex items-center gap-1 transition press-sm"
+            >
+              {showAll ? (
+                <>
+                  <span>نمایش کمتر</span>
+                  <ChevronUp size={14} />
+                </>
+              ) : (
+                <>
+                  <span>نمایش همه ({toPersianDigits(totalCount)})</span>
+                  <ChevronDown size={14} />
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {txLoading ? (
@@ -160,10 +188,18 @@ export default function HomePage() {
           </Card>
         ) : (
           <Card padded={false} className="px-4">
-            <TransactionList
-              transactions={transactions}
-              onItemClick={() => navigate(ROUTES.EXPENSES)}
-            />
+            <TransactionList transactions={transactions} />
+
+            {/* دکمه‌ی نمایش کمتر در پایین (اگه بازه) */}
+            {showAll && hasMore && (
+              <button
+                onClick={() => setShowAll(false)}
+                className="w-full h-11 mt-1 border-t border-border text-primary text-[13px] font-medium flex items-center justify-center gap-1.5 transition press-sm"
+              >
+                <ChevronUp size={14} />
+                <span>بستن لیست</span>
+              </button>
+            )}
           </Card>
         )}
       </section>

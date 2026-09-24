@@ -3,63 +3,63 @@ export const DEFAULT_CATEGORIES = [
   {
     id: 'food', type: 'expense', name: 'خوراک', icon: 'Utensils',
     color: '#F59E0B', sortOrder: 1, isDefault: true,
-    placeholder: 'مثلاً نهار برنج',
+    placeholder: 'مثلاً نهار برنج و کباب',
   },
   {
     id: 'transport', type: 'expense', name: 'کرایه', icon: 'CarFront',
-    color: '#3B82F6', sortOrder: 2, isDefault: true,
-    placeholder: 'مثلاً کرایه موتر',
+    color: '#0EA5E9', sortOrder: 2, isDefault: true,
+    placeholder: 'مثلاً کرایه موتر به بازار',
   },
   {
     id: 'home', type: 'expense', name: 'خانه', icon: 'Home',
     color: '#10B981', sortOrder: 3, isDefault: true,
-    placeholder: 'مثلاً کرایه خانه',
+    placeholder: 'مثلاً کرایه ماه خانه',
   },
   {
     id: 'bills', type: 'expense', name: 'قبض‌ها', icon: 'Receipt',
-    color: '#8B5CF6', sortOrder: 4, isDefault: true,
-    placeholder: 'مثلاً برق، آب',
+    color: '#6B4C93', sortOrder: 4, isDefault: true,
+    placeholder: 'مثلاً برق، آب، انترنت',
   },
   {
     id: 'shopping', type: 'expense', name: 'خرید', icon: 'ShoppingBag',
-    color: '#EC4899', sortOrder: 5, isDefault: true,
-    placeholder: 'مثلاً لباس بچه‌ها',
+    color: '#D81B60', sortOrder: 5, isDefault: true,
+    placeholder: 'مثلاً خرید لباس، لوازم خانه...',
   },
   {
     id: 'health', type: 'expense', name: 'صحت', icon: 'HeartPulse',
-    color: '#EF4444', sortOrder: 6, isDefault: true,
-    placeholder: 'مثلاً دوا',
+    color: '#B91C4A', sortOrder: 6, isDefault: true,
+    placeholder: 'مثلاً دوا و دکتر',
   },
   {
     id: 'education', type: 'expense', name: 'تعلیم', icon: 'GraduationCap',
-    color: '#06B6D4', sortOrder: 7, isDefault: true,
-    placeholder: 'مثلاً کتاب، قلم',
+    color: '#8E24AA', sortOrder: 7, isDefault: true,
+    placeholder: 'مثلاً کتاب و قلم',
   },
   {
     id: 'gift-out', type: 'expense', name: 'هدیه', icon: 'Gift',
-    color: '#F472B6', sortOrder: 8, isDefault: true,
-    placeholder: 'مثلاً عروسی',
+    color: '#F06292', sortOrder: 8, isDefault: true,
+    placeholder: 'مثلاً هدیه عروسی',
   },
   {
     id: 'other-expense', type: 'expense', name: 'سایر', icon: 'MoreHorizontal',
-    color: '#6B7280', sortOrder: 9, isDefault: true,
-    placeholder: 'توضیح کوتاه...',
+    color: '#9C7A88', sortOrder: 9, isDefault: true,
+    placeholder: 'توضیح کوتاه بنویس...',
   },
 
   // ─── درآمد ───
   {
     id: 'salary', type: 'income', name: 'معاش', icon: 'Wallet',
-    color: '#00B894', sortOrder: 1, isDefault: true,
+    color: '#16A34A', sortOrder: 1, isDefault: true,
     placeholder: 'معاش ماه',
   },
   {
     id: 'freelance', type: 'income', name: 'کار آزاد', icon: 'Briefcase',
-    color: '#10B981', sortOrder: 2, isDefault: true,
+    color: '#22C55E', sortOrder: 2, isDefault: true,
     placeholder: 'مثلاً تدریس خصوصی',
   },
   {
     id: 'gift-in', type: 'income', name: 'هدیه', icon: 'Gift',
-    color: '#F472B6', sortOrder: 3, isDefault: true,
+    color: '#84CC16', sortOrder: 3, isDefault: true,
     placeholder: 'مثلاً عیدی',
   },
   {
@@ -69,8 +69,8 @@ export const DEFAULT_CATEGORIES = [
   },
   {
     id: 'other-income', type: 'income', name: 'سایر', icon: 'CircleDollarSign',
-    color: '#6B7280', sortOrder: 5, isDefault: true,
-    placeholder: 'توضیح کوتاه...',
+    color: '#10B981', sortOrder: 5, isDefault: true,
+    placeholder: 'توضیح کوتاه بنویس...',
   },
 ]
 

@@ -1,20 +1,37 @@
-import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+  Check,
+} from 'lucide-react'
 import {
   addMonths,
   subMonths,
   startOfMonth,
   endOfMonth,
   isSameDay,
-  isSameMonth,
 } from 'date-fns-jalali'
 import { cn, toPersianDigits, toISODate } from '@/lib/utils'
-import { AFGHAN_MONTHS, formatJalaliLong } from '@/lib/jalali'
-import { getDate, getMonth, getYear } from '@/lib/jalali'
+import {
+  AFGHAN_MONTHS,
+  formatJalaliLong,
+  getDate,
+  getMonth,
+  getYear,
+} from '@/lib/jalali'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 
-const WEEKDAYS = ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه']
+const WEEKDAYS = [
+  'شنبه',
+  'یک‌شنبه',
+  'دوشنبه',
+  'سه‌شنبه',
+  'چهارشنبه',
+  'پنج‌شنبه',
+  'جمعه',
+]
 
 function buildMonthGrid(date) {
   const first = startOfMonth(date)
@@ -25,11 +42,14 @@ function buildMonthGrid(date) {
     days.push(new Date(cursor))
     cursor.setDate(cursor.getDate() + 1)
   }
-  // offset: شنبه = 0
   const offset = (first.getDay() + 1) % 7
   const cells = new Array(offset).fill(null).concat(days)
   while (cells.length % 7 !== 0) cells.push(null)
   return cells
+}
+
+function dayKey(d) {
+  return toISODate(d)
 }
 
 export default function DatePickerModal({
@@ -38,21 +58,51 @@ export default function DatePickerModal({
   value,
   onSelect,
 }) {
-  const initial = value ? new Date(value) : new Date()
-  const [viewDate, setViewDate] = useState(initial)
+  const [viewDate, setViewDate] = useState(new Date())
+  const [selected, setSelected] = useState(todayISO())
 
-  const cells = buildMonthGrid(viewDate)
   const today = new Date()
+  const todayKey = dayKey(today)
+
+  /* sync با value وقتی مودال باز می‌شه */
+  useEffect(() => {
+    if (open) {
+      const v = value || toISODate(new Date())
+      setViewDate(value ? new Date(value) : new Date())
+      setSelected(v)
+    }
+  }, [open, value])
+
+  const isCurrentMonth =
+    getYear(viewDate) === getYear(today) &&
+    getMonth(viewDate) === getMonth(today)
+
+  const canGoNext = !isCurrentMonth && viewDate < today
 
   const handlePrev = () => setViewDate(subMonths(viewDate, 1))
-  const handleNext = () => setViewDate(addMonths(viewDate, 1))
-  const handleToday = () => setViewDate(new Date())
+  const handleNext = () => {
+    if (!canGoNext) return
+    setViewDate(addMonths(viewDate, 1))
+  }
+  const handleToday = () => {
+    setViewDate(new Date())
+    setSelected(toISODate(today))
+  }
 
+  /* فقط انتخاب می‌کنه، نمی‌بنده */
   const handlePick = (day) => {
     if (!day) return
-    onSelect?.(toISODate(day))
+    if (dayKey(day) > todayKey) return
+    setSelected(toISODate(day))
+  }
+
+  /* تایید و بستن */
+  const handleConfirm = () => {
+    onSelect?.(selected)
     onClose?.()
   }
+
+  const cells = buildMonthGrid(viewDate)
 
   return (
     <Modal
@@ -60,12 +110,19 @@ export default function DatePickerModal({
       onClose={onClose}
       title="انتخاب تاریخ"
       className="max-w-sm"
+      lockScroll={true}
     >
       {/* هدر ماه */}
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={handleNext}
-          className="size-9 rounded-full hover:bg-brand-soft flex items-center justify-center text-fg transition active:scale-95"
+          disabled={!canGoNext}
+          className={cn(
+            'size-9 rounded-full flex items-center justify-center transition press-sm',
+            canGoNext
+              ? 'hover:bg-primary/10 text-text'
+              : 'text-text-muted/30 cursor-not-allowed'
+          )}
           aria-label="ماه بعد"
         >
           <ChevronLeft size={20} />
@@ -73,17 +130,18 @@ export default function DatePickerModal({
 
         <button
           onClick={handleToday}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-brand-soft transition"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-primary/10 transition press-sm"
         >
-          <CalendarIcon size={14} className="text-brand" />
-          <span className="text-sm font-medium text-fg">
-            {AFGHAN_MONTHS[getMonth(viewDate)]} {toPersianDigits(getYear(viewDate))}
+          <CalendarIcon size={14} className="text-primary" />
+          <span className="text-sm font-medium text-text">
+            {AFGHAN_MONTHS[getMonth(viewDate)]}{' '}
+            {toPersianDigits(getYear(viewDate))}
           </span>
         </button>
 
         <button
           onClick={handlePrev}
-          className="size-9 rounded-full hover:bg-brand-soft flex items-center justify-center text-fg transition active:scale-95"
+          className="size-9 rounded-full hover:bg-primary/10 flex items-center justify-center text-text transition press-sm"
           aria-label="ماه قبل"
         >
           <ChevronRight size={20} />
@@ -97,7 +155,7 @@ export default function DatePickerModal({
             key={d}
             className={cn(
               'text-[10px] font-medium text-center py-1',
-              i === 6 ? 'text-danger' : 'text-fg-muted'
+              i === 6 ? 'text-expense' : 'text-text-muted'
             )}
           >
             {d.slice(0, 3)}
@@ -108,27 +166,47 @@ export default function DatePickerModal({
       {/* شبکه‌ی روزها */}
       <div className="grid grid-cols-7 gap-1">
         {cells.map((day, idx) => {
-          if (!day) return <div key={`empty-${idx}`} className="aspect-square" />
+          if (!day) {
+            return <div key={`empty-${idx}`} className="aspect-square" />
+          }
 
+          const key = dayKey(day)
+          const isFuture = key > todayKey
           const isToday = isSameDay(day, today)
-          const isSelected = value && isSameDay(day, new Date(value))
+          const isSelected = selected === key
           const isFriday = day.getDay() === 5
+
+          if (isFuture) {
+            return (
+              <div
+                key={idx}
+                className={cn(
+                  'aspect-square rounded-xl flex items-center justify-center',
+                  'text-[13px] font-medium text-text-muted/25',
+                  'cursor-not-allowed select-none'
+                )}
+              >
+                {toPersianDigits(getDate(day))}
+              </div>
+            )
+          }
 
           return (
             <button
               key={idx}
+              type="button"
               onClick={() => handlePick(day)}
               className={cn(
                 'aspect-square rounded-xl flex items-center justify-center',
                 'text-[13px] font-medium transition-all duration-150',
-                'active:scale-90',
+                'press-sm',
                 isSelected
-                  ? 'bg-brand text-white shadow-brand'
+                  ? 'bg-primary text-white shadow-md font-bold'
                   : isToday
-                    ? 'bg-brand-soft text-brand font-bold'
+                    ? 'bg-primary/15 text-primary font-bold'
                     : isFriday
-                      ? 'text-danger hover:bg-danger-soft'
-                      : 'text-fg hover:bg-brand-soft'
+                      ? 'text-expense hover:bg-expense/10'
+                      : 'text-text hover:bg-primary/10'
               )}
             >
               {toPersianDigits(getDate(day))}
@@ -137,27 +215,29 @@ export default function DatePickerModal({
         })}
       </div>
 
-      {/* دکمه‌ها */}
-      <div className="mt-5 grid grid-cols-2 gap-2">
+      {/* پیش‌نمایش */}
+      <div className="mt-4 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary">
+          <CalendarIcon size={12} />
+          <span className="text-xs font-medium">
+            {formatJalaliLong(new Date(selected))}
+          </span>
+        </div>
+      </div>
+
+      {/* دکمه‌های عملیات */}
+      <div className="mt-4 grid grid-cols-2 gap-2">
         <Button variant="secondary" onClick={handleToday}>
           امروز
         </Button>
-        <Button
-          variant="primary"
-          onClick={() => {
-            onSelect?.(toISODate(today))
-            onClose?.()
-          }}
-        >
-          انتخاب امروز
+        <Button variant="primary" icon={Check} onClick={handleConfirm}>
+          تایید
         </Button>
       </div>
-
-      {value && (
-        <p className="mt-3 text-center text-xs text-fg-muted">
-          انتخاب شده: {formatJalaliLong(new Date(value))}
-        </p>
-      )}
     </Modal>
   )
+}
+
+function todayISO() {
+  return toISODate(new Date())
 }

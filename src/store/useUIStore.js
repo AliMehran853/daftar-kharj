@@ -25,7 +25,9 @@ export const useUIStore = create((set, get) => ({
     const effective = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme
     document.documentElement.classList.toggle('dark', effective === 'dark')
     const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', effective === 'dark' ? '#0A1F1C' : '#00B894')
+    if (meta) {
+      meta.setAttribute('content', effective === 'dark' ? '#071321' : '#E8F0F6')
+    }
   },
   toggleTheme: () => {
     const current = get().theme
@@ -45,6 +47,11 @@ export const useUIStore = create((set, get) => ({
   openModal: (name, payload = null) => set({ modal: name, modalPayload: payload }),
   closeModal: () => set({ modal: null, modalPayload: null }),
 
+  /* ── انتخابگر تاریخ (جدا از Drawer تا کلیک‌ها درست کار کنه) ── */
+  datePicker: null, // { value, onSelect }
+  openDatePicker: (opts) => set({ datePicker: opts }),
+  closeDatePicker: () => set({ datePicker: null }),
+
   /* ── Toast ── */
   toast: null,
   showToast: (message, type = 'info') =>
@@ -58,11 +65,11 @@ export const useUIStore = create((set, get) => ({
   activePeriod: 'monthly',
   setActivePeriod: (p) => set({ activePeriod: p }),
 
-  /* ── حالت حریم خصوصی ── */
+  /* ── حریم خصوصی ── */
   privacyMode: false,
   togglePrivacy: () => set((s) => ({ privacyMode: !s.privacyMode })),
 
-  /* ── refresh signal ── */
+  /* ── refresh ── */
   refreshKey: 0,
   triggerRefresh: () => set((s) => ({ refreshKey: s.refreshKey + 1 })),
 }))

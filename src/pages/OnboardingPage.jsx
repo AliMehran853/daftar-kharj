@@ -59,7 +59,6 @@ export default function OnboardingPage() {
         onboardingCompleted: true,
       })
 
-      // پس‌انداز اولیه → به حساب پس‌انداز اضافه می‌شه
       const savingsAmount = safeNumber(initialSavings)
       if (hasSavings && savingsAmount > 0) {
         await addTransaction({
@@ -80,7 +79,6 @@ export default function OnboardingPage() {
       showToast('خطا در ذخیره‌سازی', 'error')
       setSaving(false)
     }
-    // نکته: بعد از این، App خودکار رندر می‌شه چون onboardingCompleted=true شده
   }
 
   return (
@@ -92,8 +90,8 @@ export default function OnboardingPage() {
             key={i}
             className={cn(
               'h-1.5 rounded-full transition-all duration-300',
-              i === step ? 'w-8 bg-brand' : 'w-2 bg-border',
-              i < step && 'bg-brand'
+              i === step ? 'w-8 bg-primary' : 'w-2 bg-border',
+              i < step && 'bg-primary'
             )}
           />
         ))}
@@ -219,31 +217,33 @@ function WelcomeStep() {
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         className="size-24 rounded-[28px] flex items-center justify-center shadow-brand mb-6"
         style={{
-          background: 'linear-gradient(135deg, #00B894 0%, #009B7A 100%)',
+          background: 'var(--gradient-brand)',
         }}
       >
         <span className="text-4xl">💰</span>
       </motion.div>
 
-      <h1 className="text-2xl font-bold text-fg">به دفتر خرج خوش آمدی</h1>
-      <p className="text-sm text-fg-muted mt-2 max-w-xs leading-relaxed">
+      <h1 className="text-2xl font-bold text-text">
+        به دفتر خرج خوش آمدی
+      </h1>
+      <p className="text-sm text-text-muted mt-2 max-w-xs leading-relaxed">
         دستیار مالی شخصی تو، کاملاً آفلاین روی همین گوشی.
       </p>
 
       <div className="w-full max-w-sm mt-8 space-y-2">
         <FeatureRow
           icon={BarChart3}
-          color="#00B894"
+          color="var(--primary)"
           text="نمودارها و گزارش‌های واضح"
         />
         <FeatureRow
           icon={Shield}
-          color="#4A9FE8"
+          color="var(--saving)"
           text="قفل و امنیت روی همین گوشی"
         />
         <FeatureRow
           icon={WifiOff}
-          color="#8B5CF6"
+          color="var(--accent)"
           text="کاملاً آفلاین، بدون سرور"
         />
       </div>
@@ -253,14 +253,14 @@ function WelcomeStep() {
 
 function FeatureRow({ icon: Icon, color, text }) {
   return (
-    <div className="flex items-center gap-3 bg-card border border-border rounded-btn p-3">
+    <div className="flex items-center gap-3 bg-surface border border-border rounded-btn p-3">
       <div
         className="size-10 rounded-xl flex items-center justify-center shrink-0"
-        style={{ backgroundColor: `${color}1A`, color }}
+        style={{ backgroundColor: `${color}20`, color }}
       >
         <Icon size={18} />
       </div>
-      <span className="text-sm text-fg-secondary text-right flex-1">
+      <span className="text-sm text-text-secondary text-right flex-1">
         {text}
       </span>
     </div>
@@ -273,18 +273,18 @@ function FeatureRow({ icon: Icon, color, text }) {
 function NameStep({ firstName, lastName, onFirstName, onLastName }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center">
-      <div className="size-16 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-5">
+      <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-5">
         <User size={28} />
       </div>
-      <h2 className="text-xl font-bold text-fg">اسمت چیه؟</h2>
-      <p className="text-sm text-fg-muted mt-1.5 text-center max-w-xs">
+      <h2 className="text-xl font-bold text-text">اسمت چیه؟</h2>
+      <p className="text-sm text-text-muted mt-1.5 text-center max-w-xs">
         با این اسم تو اپ نمایش داده می‌شی.
       </p>
 
       <div className="w-full max-w-sm mt-8 space-y-3">
         <Input
           label="اسم"
-          placeholder="مثلاً شریف"
+          placeholder="شریف"
           value={firstName}
           onChange={(e) => onFirstName(e.target.value)}
           maxLength={30}
@@ -292,7 +292,7 @@ function NameStep({ firstName, lastName, onFirstName, onLastName }) {
         />
         <Input
           label="تخلص (اختیاری)"
-          placeholder="مثلاً محمدی"
+          placeholder="نوید"
           value={lastName}
           onChange={(e) => onLastName(e.target.value)}
           maxLength={30}
@@ -314,16 +314,16 @@ function SalaryStep({ value, onChange }) {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center">
-      <div className="size-16 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-5">
+      <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-5">
         <Banknote size={28} />
       </div>
-      <h2 className="text-xl font-bold text-fg">معاش ماهانه‌ات چقدره؟</h2>
-      <p className="text-sm text-fg-muted mt-1.5 text-center max-w-xs">
+      <h2 className="text-xl font-bold text-text">معاش ماهانه‌ات چقدره؟</h2>
+      <p className="text-sm text-text-muted mt-1.5 text-center max-w-xs">
         این عدد رو بعداً هم می‌تونی از تنظیمات تغییر بدی.
       </p>
 
       <div className="w-full max-w-sm mt-8">
-        <div className="rounded-2xl bg-card border border-border p-6">
+        <div className="rounded-2xl bg-surface border border-border p-6">
           <input
             type="text"
             inputMode="numeric"
@@ -333,11 +333,11 @@ function SalaryStep({ value, onChange }) {
             autoFocus
             className={cn(
               'w-full bg-transparent text-center',
-              'text-[40px] leading-none font-bold text-brand',
-              'placeholder:text-fg-muted/30 focus:outline-none'
+              'text-[40px] leading-none font-bold text-primary',
+              'placeholder:text-text-muted/30 focus:outline-none'
             )}
           />
-          <div className="text-center text-xs text-fg-muted mt-3">
+          <div className="text-center text-xs text-text-muted mt-3">
             افغانی
           </div>
         </div>
@@ -358,11 +358,11 @@ function SavingsStep({ hasSavings, setHasSavings, value, onChange }) {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center">
-      <div className="size-16 rounded-2xl bg-info-soft text-info flex items-center justify-center mb-5">
+      <div className="size-16 rounded-2xl bg-saving/10 text-saving flex items-center justify-center mb-5">
         <PiggyBank size={28} />
       </div>
-      <h2 className="text-xl font-bold text-fg">پس‌اندازی داری؟</h2>
-      <p className="text-sm text-fg-muted mt-1.5 text-center max-w-xs">
+      <h2 className="text-xl font-bold text-text">پس‌اندازی داری؟</h2>
+      <p className="text-sm text-text-muted mt-1.5 text-center max-w-xs">
         اگه الان پولی کنار گذاشتی، این‌جا واردش کن. اختیاریه.
       </p>
 
@@ -372,10 +372,10 @@ function SavingsStep({ hasSavings, setHasSavings, value, onChange }) {
             type="button"
             onClick={() => setHasSavings(true)}
             className={cn(
-              'h-14 rounded-btn font-medium transition active:scale-[0.98]',
+              'h-14 rounded-btn font-medium transition press-sm',
               hasSavings === true
-                ? 'bg-info text-white shadow-md'
-                : 'bg-card border border-border text-fg-secondary'
+                ? 'bg-saving text-white shadow-md'
+                : 'bg-surface border border-border text-text-secondary'
             )}
           >
             بله، دارم
@@ -387,10 +387,10 @@ function SavingsStep({ hasSavings, setHasSavings, value, onChange }) {
               onChange('')
             }}
             className={cn(
-              'h-14 rounded-btn font-medium transition active:scale-[0.98]',
+              'h-14 rounded-btn font-medium transition press-sm',
               hasSavings === false
-                ? 'bg-info text-white shadow-md'
-                : 'bg-card border border-border text-fg-secondary'
+                ? 'bg-saving text-white shadow-md'
+                : 'bg-surface border border-border text-text-secondary'
             )}
           >
             نه، ندارم
@@ -406,7 +406,7 @@ function SavingsStep({ hasSavings, setHasSavings, value, onChange }) {
               transition={{ duration: 0.25 }}
               className="overflow-hidden"
             >
-              <div className="rounded-2xl bg-card border border-border p-5">
+              <div className="rounded-2xl bg-surface border border-border p-5">
                 <input
                   type="text"
                   inputMode="numeric"
@@ -416,11 +416,11 @@ function SavingsStep({ hasSavings, setHasSavings, value, onChange }) {
                   autoFocus
                   className={cn(
                     'w-full bg-transparent text-center',
-                    'text-[32px] leading-none font-bold text-info',
-                    'placeholder:text-fg-muted/30 focus:outline-none'
+                    'text-[32px] leading-none font-bold text-saving',
+                    'placeholder:text-text-muted/30 focus:outline-none'
                   )}
                 />
-                <div className="text-center text-xs text-fg-muted mt-2">
+                <div className="text-center text-xs text-text-muted mt-2">
                   افغانی
                 </div>
               </div>
@@ -442,16 +442,16 @@ function DoneStep({ firstName, salary, savings }) {
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 250, damping: 18 }}
-        className="relative size-24 rounded-full bg-brand-soft flex items-center justify-center mb-6"
+        className="relative size-24 rounded-full bg-primary/15 flex items-center justify-center mb-6"
       >
-        <div className="absolute inset-0 rounded-full bg-brand/20 animate-ping" />
-        <div className="relative size-16 rounded-full bg-brand text-white flex items-center justify-center shadow-brand">
+        <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+        <div className="relative size-16 rounded-full bg-primary text-white flex items-center justify-center shadow-brand">
           <Check size={32} strokeWidth={3} />
         </div>
       </motion.div>
 
-      <h2 className="text-2xl font-bold text-fg">همه چیز آماده است!</h2>
-      <p className="text-sm text-fg-muted mt-2 max-w-xs leading-relaxed">
+      <h2 className="text-2xl font-bold text-text">همه چیز آماده است!</h2>
+      <p className="text-sm text-text-muted mt-2 max-w-xs leading-relaxed">
         {firstName ? `${firstName} جان، ` : ''}حالا می‌تونی معاش و خرج‌هات رو
         ثبت کنی و همه‌چیز رو زیر نظر داشته باشی.
       </p>
@@ -460,7 +460,7 @@ function DoneStep({ firstName, salary, savings }) {
         {safeNumber(salary) > 0 && (
           <SummaryRow
             icon={Banknote}
-            color="#00B894"
+            color="var(--income)"
             label="معاش ماهانه"
             value={`${formatMoney(salary)} افغانی`}
           />
@@ -468,14 +468,14 @@ function DoneStep({ firstName, salary, savings }) {
         {safeNumber(savings) > 0 && (
           <SummaryRow
             icon={PiggyBank}
-            color="#4A9FE8"
+            color="var(--saving)"
             label="پس‌انداز اولیه"
             value={`${formatMoney(savings)} افغانی`}
           />
         )}
         <SummaryRow
           icon={Sparkles}
-          color="#8B5CF6"
+          color="var(--accent)"
           label="وضعیت"
           value="آماده‌ی شروع"
         />
@@ -486,16 +486,16 @@ function DoneStep({ firstName, salary, savings }) {
 
 function SummaryRow({ icon: Icon, color, label, value }) {
   return (
-    <div className="flex items-center gap-3 bg-card border border-border rounded-btn p-3">
+    <div className="flex items-center gap-3 bg-surface border border-border rounded-btn p-3">
       <div
         className="size-10 rounded-xl flex items-center justify-center shrink-0"
-        style={{ backgroundColor: `${color}1A`, color }}
+        style={{ backgroundColor: `${color}20`, color }}
       >
         <Icon size={18} />
       </div>
       <div className="flex-1 text-right">
-        <div className="text-xs text-fg-muted">{label}</div>
-        <div className="text-sm font-medium text-fg">{value}</div>
+        <div className="text-xs text-text-muted">{label}</div>
+        <div className="text-sm font-medium text-text">{value}</div>
       </div>
     </div>
   )
