@@ -44,7 +44,6 @@
 
 /* ─────────────────────────────────────────────
    Light Mode — DK Soft Light
-   highlight ملایم‌تر، blur کمتر روی المان‌های بزرگ
    ───────────────────────────────────────────── */
 :root {
   --bg: #E8F0F6;
@@ -71,11 +70,9 @@
   --warning: #F5A623;
   --warning-soft: #FFE5B5;
 
-  /* highlight ملایم‌تر — قبلاً 1 بود، حالا 0.72 */
   --neu-light: rgba(255, 255, 255, 0.72);
   --neu-dark: rgba(163, 177, 191, 0.55);
 
-  /* Raised عادی — برای کارت‌های کوچک و متوسط */
   --shadow-raised:
     -5px -5px 14px var(--neu-light),
     5px 5px 14px var(--neu-dark);
@@ -84,7 +81,6 @@
     -3px -3px 8px var(--neu-light),
     3px 3px 8px var(--neu-dark);
 
-  /* Raised-lg — برای Modal/Sheet — highlight ظریف‌تر و blur کمتر */
   --shadow-raised-lg:
     -6px -6px 16px rgba(255, 255, 255, 0.55),
     8px 8px 20px rgba(163, 177, 191, 0.42);
@@ -119,13 +115,20 @@
   --border: rgba(102, 128, 157, 0.12);
   --border-strong: rgba(102, 128, 157, 0.20);
 
+  /* ─── نوار پایین — نئومورفیک ─── */
+  --nav-bg: var(--surface);
+  --nav-border: transparent;
+  --nav-shadow:
+    -6px -6px 16px rgba(255, 255, 255, 0.95),
+    6px 6px 16px rgba(140, 160, 180, 0.50),
+    10px 10px 28px rgba(140, 160, 180, 0.30);
+
   --gradient-brand: linear-gradient(135deg, #183B70 0%, #315B95 100%);
   --gradient-savings: linear-gradient(135deg, #7457D9 0%, #5B44A8 100%);
 }
 
 /* ─────────────────────────────────────────────
    Dark Mode — DK Deep Dark
-   سایه‌های تیره (نه روشن) — بازگشت به نسخه‌ی قبلی
    ───────────────────────────────────────────── */
 .dark {
   --bg: #071321;
@@ -152,7 +155,6 @@
   --warning: #FFB638;
   --warning-soft: rgba(255, 182, 56, 0.15);
 
-  /* سایه‌های تیره‌ی هم‌خانواده Navy */
   --shadow-raised:
     0 1px 2px rgba(2, 6, 18, 0.55),
     0 4px 12px rgba(2, 6, 18, 0.45),
@@ -194,6 +196,14 @@
 
   --border: rgba(91, 156, 255, 0.05);
   --border-strong: rgba(91, 156, 255, 0.10);
+
+  /* ─── نوار پایین — نئومورفیک دارک ─── */
+  --nav-bg: var(--surface);
+  --nav-border: transparent;
+  --nav-shadow:
+    -4px -4px 12px rgba(60, 90, 130, 0.20),
+    6px 6px 16px rgba(0, 0, 0, 0.65),
+    10px 10px 28px rgba(0, 0, 0, 0.45);
 
   --gradient-brand: linear-gradient(135deg, #1F4A8F 0%, #2E68B8 100%);
   --gradient-savings: linear-gradient(135deg, #6B4FB3 0%, #48358A 100%);
@@ -341,6 +351,12 @@
 @utility neu-flat {
   background: var(--surface);
   box-shadow: var(--shadow-flat);
+}
+
+/* ─── نوار پایین — نئومورفیک ─── */
+@utility neu-bottom-nav {
+  background: var(--nav-bg);
+  box-shadow: var(--nav-shadow);
 }
 
 @utility press {

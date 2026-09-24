@@ -59,11 +59,6 @@ export default function Modal({
         <motion.div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4"
           data-vaul-no-drag=""
-          onPointerDownCapture={(e) => e.stopPropagation()}
-          onPointerUpCapture={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          onPointerUp={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
           style={{
             pointerEvents: 'auto',
             touchAction: 'none',
@@ -89,11 +84,13 @@ export default function Modal({
             transition={{ type: 'spring', stiffness: 340, damping: 30 }}
             className={cn(
               'relative w-full max-w-md',
-              'neu-raised-lg rounded-card-lg',
+              'rounded-card-lg',
               'p-5 max-h-[92dvh] overflow-y-auto no-scrollbar',
               className
             )}
             style={{
+              background: 'var(--surface)',
+              boxShadow: 'var(--modal-shadow)',
               pointerEvents: 'auto',
               touchAction: 'auto',
               overscrollBehavior: 'contain',
@@ -109,7 +106,11 @@ export default function Modal({
                 {showClose && (
                   <button
                     onClick={onClose}
-                    className="size-9 rounded-full neu-raised-sm flex items-center justify-center text-text-muted transition press-sm"
+                    className="size-9 rounded-full flex items-center justify-center text-text-muted transition press-sm"
+                    style={{
+                      background: 'var(--surface)',
+                      boxShadow: 'var(--shadow-raised-sm)',
+                    }}
                     aria-label="بستن"
                   >
                     <X size={18} />

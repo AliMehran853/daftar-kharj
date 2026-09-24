@@ -14,7 +14,13 @@ const items = [
 export default function BottomNav() {
   return (
     <nav className="lg:hidden fixed bottom-2 inset-x-3 z-30 pb-safe">
-      <div className="neu-raised-lg rounded-[26px] h-16 flex items-center justify-around px-1.5 max-w-md mx-auto">
+      <div
+        className={cn(
+          'neu-bottom-nav rounded-[26px] h-16',
+          'flex items-center justify-around px-1.5',
+          'max-w-md mx-auto'
+        )}
+      >
         {items.map((item, i) => {
           if (item.type === 'spacer') {
             return <div key={`spacer-${i}`} className="w-16" />
@@ -30,9 +36,7 @@ export default function BottomNav() {
                   'flex flex-col items-center justify-center gap-0.5',
                   'flex-1 h-full rounded-2xl transition-all duration-200',
                   'press-sm',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-text-muted'
+                  isActive ? 'text-primary' : 'text-text-muted'
                 )
               }
             >

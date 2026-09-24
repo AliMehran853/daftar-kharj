@@ -60,6 +60,7 @@ export default function SettingsPage() {
   const lockIsFullyEnabled =
     auth.lockEnabled && (auth.pinEnabled || auth.biometricEnabled)
 
+  /* ── روشن/خاموش کردن سوییچ قفل ── */
   const handleToggleLock = async (enabled) => {
     if (enabled) {
       if (!auth.pinEnabled && !auth.biometricEnabled) {
@@ -83,6 +84,7 @@ export default function SettingsPage() {
     }
   }
 
+  /* ── تنظیم / تغییر PIN ── */
   const handleSetupPin = () => {
     if (auth.pinEnabled) {
       openSheet('pin-setup', {
@@ -112,6 +114,7 @@ export default function SettingsPage() {
     }
   }
 
+  /* ── حذف PIN ── */
   const handleRemovePin = () => {
     openSheet('pin-setup', {
       mode: 'verify',
@@ -123,6 +126,7 @@ export default function SettingsPage() {
     })
   }
 
+  /* ── ثبت / حذف اثر انگشت ── */
   const handleToggleBiometric = async () => {
     setBiometricBusy(true)
     try {
@@ -153,12 +157,14 @@ export default function SettingsPage() {
     }
   }
 
+  /* ── خروج از حساب ── */
   const handleLogout = () => {
     auth.lock()
     setLogoutOpen(false)
     showToast('از حساب خارج شدی', 'info')
   }
 
+  /* ── یادآوری ── */
   const handleToggleReminder = async (v) => {
     await settings.update('reminderEnabled', v)
     showToast(
@@ -167,6 +173,7 @@ export default function SettingsPage() {
     )
   }
 
+  /* ── ریست کامل ── */
   const handleReset = async () => {
     setResetting(true)
     try {
@@ -187,10 +194,8 @@ export default function SettingsPage() {
     <div className="px-4 lg:px-6 py-2 pb-6 space-y-5">
       <PageHeader title="تنظیمات" />
 
-      <button
-        onClick={() => setEditProfileOpen(true)}
-        className="w-full rounded-card p-4 flex items-center gap-3 text-right transition press-sm neu-raised-sm"
-      >
+      {/* کارت پروفایل — فقط نمایشی */}
+      <div className="w-full rounded-card p-4 flex items-center gap-3 neu-raised-sm">
         <Avatar name={initial} size="lg" />
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-text truncate">{displayName}</div>
@@ -198,9 +203,9 @@ export default function SettingsPage() {
             حساب محلی روی همین دستگاه
           </div>
         </div>
-        <ChevronLeft size={18} className="text-text-muted shrink-0" />
-      </button>
+      </div>
 
+      {/* پروفایل */}
       <Section title="پروفایل">
         <Row
           icon={User}
@@ -217,6 +222,7 @@ export default function SettingsPage() {
         />
       </Section>
 
+      {/* امنیت */}
       <Section title="امنیت">
         <Row
           icon={Lock}
@@ -269,6 +275,7 @@ export default function SettingsPage() {
         />
       </Section>
 
+      {/* یادآوری */}
       <Section title="یادآوری">
         <Row
           icon={Bell}
@@ -293,6 +300,7 @@ export default function SettingsPage() {
         )}
       </Section>
 
+      {/* داده‌ها */}
       <Section title="داده‌ها">
         <Row
           icon={HardDriveDownload}
@@ -311,13 +319,14 @@ export default function SettingsPage() {
         />
         <Row
           icon={Info}
-          color="var(--text-muted)"
+          color="var(--primary)"
           label="درباره‌ی دفتر خرج"
           value={`نسخه ${APP_VERSION}`}
           onClick={() => setAboutOpen(true)}
         />
       </Section>
 
+      {/* خروج */}
       {lockIsFullyEnabled && (
         <Section title="حساب">
           <Row
@@ -333,10 +342,9 @@ export default function SettingsPage() {
 
       <div className="pt-3 text-center text-[11px] text-text-muted leading-relaxed">
         {APP_NAME} • نسخه {APP_VERSION}
-        <br />
-        ساخته شده با ❤ در افغانستان
       </div>
 
+      {/* مودال‌ها */}
       <EditProfileModal
         open={editProfileOpen}
         onClose={() => setEditProfileOpen(false)}
@@ -376,6 +384,9 @@ export default function SettingsPage() {
   )
 }
 
+/* ──────────────────────────────
+   کامپوننت‌های کمکی
+────────────────────────────── */
 function Section({ title, children }) {
   return (
     <section>
@@ -415,7 +426,6 @@ function Row({
         style={{
           backgroundColor: `${color}15`,
           color,
-          boxShadow: `inset 2px 2px 6px rgba(0,0,0,0.06), inset -2px -2px 6px rgba(255,255,255,0.7)`,
         }}
       >
         <Icon size={18} strokeWidth={2.2} />

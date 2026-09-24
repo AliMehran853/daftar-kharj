@@ -52,6 +52,7 @@ const TOTAL_DAYS = 30
 const INCOME_COLOR = '#16A56A'
 const EXPENSE_COLOR = '#F04478'
 const SAVING_COLOR = '#7457D9'
+const WALLET_COLOR = '#3299E8'
 
 const WEEKDAY_LABELS = [
   'شنبه',
@@ -272,6 +273,7 @@ export default function ReportsPage() {
                 byCategory={byCategory}
                 stats={stats}
                 currency={currency}
+                walletBalance={walletBalance}
                 onCategoryClick={(id) => navigate(`${ROUTES.CATEGORY}/${id}`)}
               />
             )}
@@ -283,7 +285,11 @@ export default function ReportsPage() {
               />
             )}
             {tab === 'trend' && (
-              <TrendTab selectedDate={selectedDate} period={period} />
+              <TrendTab
+                selectedDate={selectedDate}
+                period={period}
+                walletBalance={walletBalance}
+              />
             )}
           </motion.div>
         </AnimatePresence>
@@ -295,7 +301,13 @@ export default function ReportsPage() {
 /* ──────────────────────────────
    تب خلاصه
 ────────────────────────────── */
-function SummaryTab({ byCategory, stats, currency, onCategoryClick }) {
+function SummaryTab({
+  byCategory,
+  stats,
+  currency,
+  walletBalance,
+  onCategoryClick,
+}) {
   const rows = byCategory?.rows || []
   const total = byCategory?.totalExpense || 0
 
@@ -350,10 +362,9 @@ function SummaryTab({ byCategory, stats, currency, onCategoryClick }) {
           color={SAVING_COLOR}
         />
         <StatSmallCard
-          label="درآمد جانبی"
-          value={stats.extraIncome}
-          prefix="+"
-          color={INCOME_COLOR}
+          label="موجودی خزانه"
+          value={walletBalance}
+          color={WALLET_COLOR}
         />
         <StatSmallCard
           label="مصارف"
@@ -471,7 +482,7 @@ function CategoriesTab({ byCategory, currency, onCategoryClick }) {
 /* ──────────────────────────────
    تب روند
 ────────────────────────────── */
-function TrendTab({ selectedDate, period }) {
+function TrendTab({ selectedDate, period, walletBalance }) {
   const [txs, setTxs] = useState([])
   const [loading, setLoading] = useState(true)
   const scrollRef = useRef(null)
@@ -727,22 +738,21 @@ function TrendTab({ selectedDate, period }) {
 
       <div className="grid grid-cols-3 gap-2">
         <StatSmallCard
-          label="مصارف"
-          value={computed.stats.totalExpense}
-          prefix="−"
-          color={EXPENSE_COLOR}
-        />
-        <StatSmallCard
-          label="درآمد جانبی"
-          value={computed.stats.totalExtra}
-          prefix="+"
-          color={INCOME_COLOR}
-        />
-        <StatSmallCard
           label="کل درآمد"
           value={computed.stats.totalIncome}
           prefix="+"
           color={SAVING_COLOR}
+        />
+        <StatSmallCard
+          label="موجودی خزانه"
+          value={walletBalance}
+          color={WALLET_COLOR}
+        />
+        <StatSmallCard
+          label="مصارف"
+          value={computed.stats.totalExpense}
+          prefix="−"
+          color={EXPENSE_COLOR}
         />
       </div>
     </>
